@@ -2,13 +2,27 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 // import App from './App.tsx'
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  useParams,
+} from "react-router-dom";
 import Home from "./pages/home/index.tsx";
 import ErrorPage from "./components/error-page.tsx";
 import Plants from "./pages/plants/index.tsx";
 import PlantCreationForm from "./pages/plants/plant-form.tsx";
 import Traders from "./pages/traders/index.tsx";
 import TraderCreationForm from "./pages/traders/trader-form.tsx";
+import ViewPlant from "./pages/plants/view-plant.tsx";
+
+const MyComponentWrapper: React.FC = () => {
+  const { id } = useParams();
+  if (!id) {
+    console.log({ id });
+    return <ErrorPage></ErrorPage>;
+  }
+  return <ViewPlant id={id}></ViewPlant>;
+};
 
 const router = createBrowserRouter([
   {
@@ -25,12 +39,9 @@ const router = createBrowserRouter([
         element: <PlantCreationForm />,
       },
       {
-        path: "plants/:plantId",
-        element: (
-          <div>
-            <h1>Unimplemented plants module</h1>
-          </div>
-        ),
+        path: "plants/:id",
+        element: <MyComponentWrapper></MyComponentWrapper>,
+        // element: <ViewPlant id={plantId} />,
       },
       {
         path: "traders",

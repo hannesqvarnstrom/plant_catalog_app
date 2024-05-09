@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import React from "react";
 import { usePlantStore } from "../../store/plants";
 import { Container } from "@mui/system";
@@ -9,25 +10,57 @@ import { useTraderStore } from "../../store/traders/traders";
  */
 
 interface PlantCreationFormData {
-  name: string;
+  //   name: string;
   from?: string;
   type?: string;
+  name: PlantNameFields;
+}
+
+interface PlantNameFields {
+  sciName: string;
+  sortName?: string;
+  parentNames?: string;
+  otherNameInfo?: string;
 }
 
 function PlantCreationForm() {
   const navigate = useNavigate();
   const { traders } = useTraderStore();
   const { add } = usePlantStore();
+
   const [formData, setFormData] = React.useState<PlantCreationFormData>({
-    name: "",
+    name: {
+      sciName: "",
+      sortName: "",
+      parentNames: "",
+      otherNameInfo: "",
+    },
     from: "",
     type: "",
   });
 
-  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleInputChange(
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) {
     const { name, value } = event.target;
     console.log("{ name, value }:", { name, value });
     setFormData({ ...formData, [name]: value });
+  }
+
+  function handleInputChangeName(
+    event: React.ChangeEvent<HTMLInputElement>,
+    name: keyof PlantNameFields
+  ) {
+    const { value } = event.target;
+    console.log("{ name, value }:", { name, value });
+    const field = { [name]: value };
+    setFormData({
+      ...formData,
+      name: {
+        ...formData.name,
+        ...field,
+      },
+    });
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -41,13 +74,52 @@ function PlantCreationForm() {
       <button onClick={() => navigate(-1)}>Back</button>
       <form onSubmit={handleSubmit}>
         <h4>Create a new plant</h4>
+
         <label>
-          Name:
+          Scientific Name*:
           <input
             type="text"
             name="name"
-            value={formData.name}
-            onChange={handleInputChange}
+            value={formData.name.sciName}
+            onChange={(event) => {
+              handleInputChangeName(event, "sciName");
+            }}
+          />
+        </label>
+        <br />
+        <label>
+          Sort Name:
+          <input
+            type="text"
+            name="name"
+            value={formData.name.sortName}
+            onChange={(event) => {
+              handleInputChangeName(event, "sortName");
+            }}
+          />
+        </label>
+        <br />
+        <label>
+          Parent Names:
+          <input
+            type="text"
+            name="name"
+            value={formData.name.parentNames}
+            onChange={(event) => {
+              handleInputChangeName(event, "parentNames");
+            }}
+          />
+        </label>
+        <br />
+        <label>
+          Other Name Info:
+          <input
+            type="text"
+            name="name"
+            value={formData.name.otherNameInfo}
+            onChange={(event) => {
+              handleInputChangeName(event, "otherNameInfo");
+            }}
           />
         </label>
         <br />

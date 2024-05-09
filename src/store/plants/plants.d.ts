@@ -1,6 +1,11 @@
 declare module 'Plants' {
     interface ShallowPlant {
-        name: string,
+        name: {
+            sciName: string,
+            sortName?: string,
+            parentNames?: string,
+            otherNameInfo?: string,
+        },
         from?: string,
         image?: string,
         // ETC
