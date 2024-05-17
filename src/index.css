@@ -13,6 +13,14 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* note to self - should probably do something different */
+#root {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -24,7 +32,10 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
+  /* display flex breaks the layout by not forcing the app to full size on the screen */
+  /* FIX THIS, display flex is too good not to use */
+  /* display: flex; */ 
+
   place-items: center;
   min-width: 320px;
   min-height: 100vh;

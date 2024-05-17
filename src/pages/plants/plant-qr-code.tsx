@@ -17,7 +17,7 @@ const PlantQRCode = React.forwardRef(
     const { id, name } = plantData;
     const plantURL = `${FRONTEND_URL}/plants/${id}`;
     const plant = new PlantModel({ id, name });
-    const maxWidth = window.innerWidth <= 768 ? "default" : "85%";
+    // const maxWidth = window.innerWidth <= 768 ? "default" : "85%";
 
     return (
       <div
@@ -30,10 +30,12 @@ const PlantQRCode = React.forwardRef(
           padding: "0.5rem",
           color: "black",
           fontSize: "14px",
-          minWidth: "35mm",
-          maxWidth,
-          minHeight: "40mm",
+          // minWidth: "35mm",
+          // maxWidth,
+          // minHeight: "40mm",
           // ...pdfSettings,
+          width: "300px",
+          height: "200px",
           justifyContent: "space-between",
         }}
       >
@@ -44,7 +46,7 @@ const PlantQRCode = React.forwardRef(
             justifyContent: "flex-end",
           }}
         >
-          <QRCodeCanvas value={plantURL} size={30}></QRCodeCanvas>
+          <QRCodeCanvas value={plantURL} size={80}></QRCodeCanvas>
         </div>
       </div>
     );

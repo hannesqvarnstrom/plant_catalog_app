@@ -18,6 +18,7 @@ interface PlantsState {
 
   add: (args: ShallowPlant) => Promise<void>;
   remove: (id: string) => Promise<boolean>;
+  devPurgeAll: () => void;
 }
 
 async function removePlantFromDatabase(id: string): Promise<boolean> {
@@ -53,6 +54,11 @@ export const usePlantStore = create<PlantsState>()(
             });
 
             return true;
+          },
+          devPurgeAll: () => {
+            set((state) => ({
+              plants: [],
+            }));
           },
           plants: [],
         };

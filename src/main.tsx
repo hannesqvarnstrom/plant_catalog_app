@@ -4,6 +4,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import {
   createBrowserRouter,
+  RouteObject,
   RouterProvider,
   useParams,
 } from "react-router-dom";
@@ -24,7 +25,7 @@ const MyComponentWrapper: React.FC = () => {
   return <ViewPlant id={id}></ViewPlant>;
 };
 
-const router = createBrowserRouter([
+export const Routes: RouteObject[] = [
   {
     path: "/",
     element: <Home />,
@@ -61,7 +62,9 @@ const router = createBrowserRouter([
       },
     ],
   },
-]);
+];
+
+const router = createBrowserRouter(Routes);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
