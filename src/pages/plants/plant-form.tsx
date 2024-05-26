@@ -4,7 +4,18 @@ import { usePlantStore } from "../../store/plants";
 import { Container } from "@mui/system";
 import { /*redirect,*/ useNavigate } from "react-router";
 import { useTraderStore } from "../../store/traders/traders";
-import InputGroup from "../../components/forms/input-group";
+import {
+  Checkbox,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  Switch,
+  TextField,
+} from "@mui/material";
+import CreatePlantInputGroup from "../../components/forms/create-plant-input-group";
+import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+import PlantModel from "./plant-model";
 
 /**
  * Plant Creation Form Component (break into file)
@@ -60,6 +71,37 @@ function PlantCreationForm() {
     from: "",
     type: "",
   });
+
+  const [currentStep, setCurrentStep] = React.useState<number>(1);
+
+  const steps = {
+    scinameBase: {
+      number: 1,
+      text: "Enter the scientific name (where applicable) of your plant.",
+      name: "scinameBase",
+    },
+    hasParentage: {
+      number: 2,
+      text: "Does the plant have a parentage worth inputting?",
+      name: "hasParentage",
+    },
+    parentAHasParents: {
+      number: 3,
+      text: "Do you want to add another level of parentage? (e.g. grandparents)",
+      name: "parent1HasParents",
+    },
+    parentBHasParents: {
+      number: 4,
+      text: "Do you want to add another level of parentage? (e.g. grandparents)",
+      name: "parent2HasParents",
+    },
+  };
+
+  const [parent1, setParent1] = React.useState<boolean>(true);
+  const [grandparents1, setGrandparents1] = React.useState<boolean>(false);
+
+  const [parent2, setParent2] = React.useState<boolean>(true);
+  const [grandparents2, setGrandparents2] = React.useState<boolean>(false);
 
   function handleInputChangeCheckBox(
     event: React.ChangeEvent<HTMLInputElement>
@@ -127,6 +169,7 @@ function PlantCreationForm() {
         name2a: mapNamesToObjects(name2aName, name2aSpecies),
         name2b: mapNamesToObjects(name2bName, name2bSpecies),
       },
+      settings: { fontSize: 15 },
     });
     return navigate(-1);
   }
@@ -134,110 +177,250 @@ function PlantCreationForm() {
   return (
     <Container>
       <button onClick={() => navigate(-1)}>Back</button>
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+        }}
+      >
         <h4>Create a new plant</h4>
+        {currentStep !== 1 ? (
+          <div>
+            <p>
+              {new PlantModel({
+                id: "",
+                settings: { fontSize: 13 },
+                name: {
+                  genusName: nameState.genusName,
+                  speciesName: nameState.speciesName,
+                  varietyName: nameState.varietyName,
+                },
+              }).getName()}
+            </p>
+            <button
+              style={{
+                display: currentStep === 1 ? "none" : "block",
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+                setCurrentStep(1);
+              }}
+            >
+              Edit
+            </button>
+          </div>
+        ) : (
+          <></>
+        )}
 
-        <label>
-          Genus*:
-          <input
-            type="text"
-            name="genusName"
-            value={nameState.genusName}
-            onChange={handleInputNameChange}
-          />
-        </label>
-        <br />
-        <label>
-          Species:
-          <input
-            type="text"
-            name="speciesName"
-            value={nameState.speciesName}
-            onChange={handleInputNameChange}
-          />
-        </label>
-        <br />
-        <label>
-          Variety:
-          <input
-            type="text"
-            name="varietyName"
-            value={nameState.varietyName}
-            onChange={handleInputNameChange}
-          />
-        </label>
-        <br></br>
-        <br></br>
-        <div>
-          {/* 
+        <Grid2
+          container
+          spacing={2}
+          display={currentStep === 1 ? "flex" : "none"}
+        >
+          <Grid2
+            md={4}
+            sm={12}
+            xs={12}
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            <FormControl component="fieldset" variant="outlined">
+              <FormGroup>
+                <TextField
+                  required={true}
+                  name="genusName"
+                  value={nameState.genusName}
+                  onChange={handleInputNameChange}
+                  label="Genus:"
+                />
+              </FormGroup>
+            </FormControl>
+          </Grid2>
+          <Grid2
+            md={4}
+            sm={12}
+            xs={12}
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            <FormControl component="fieldset" variant="outlined">
+              <FormGroup>
+                <TextField
+                  required={false}
+                  name="speciesName"
+                  value={nameState.speciesName}
+                  onChange={handleInputNameChange}
+                  label="Species:"
+                />
+              </FormGroup>
+            </FormControl>
+          </Grid2>
+          <Grid2
+            md={4}
+            sm={12}
+            xs={12}
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            <FormControl component="fieldset" variant="outlined">
+              <FormGroup>
+                <TextField
+                  required={false}
+                  name="varietyName"
+                  value={nameState.varietyName}
+                  onChange={handleInputNameChange}
+                  label="Variety:"
+                />
+              </FormGroup>
+            </FormControl>
+          </Grid2>
+        </Grid2>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            setCurrentStep(currentStep + 1);
+          }}
+        >
+          Next
+        </button>
+        <Divider
+          variant="middle"
+          style={{ marginBottom: "15px", marginTop: "15px" }}
+        />
+        <Grid2 container spacing={2}>
+          <h3>
+            {parent1
+              ? grandparents1
+                ? "First grandparent's name"
+                : "First parent's name"
+              : ""}
+          </h3>
+          <Grid2>
+            {/* <FormControlLabel
+              label={""}
+              control={
+                <Switch
+                  checked={parent1}
+                  onChange={(event) => setParent1(event.target.checked)}
+                ></Switch>
+              }
+            ></FormControlLabel> */}
+            <FormControlLabel
+              label={"Convert first parent to grandparents"}
+              control={
+                <Switch
+                  checked={grandparents1}
+                  onChange={(event) => setGrandparents1(event.target.checked)}
+                ></Switch>
+              }
+            ></FormControlLabel>
+          </Grid2>
+          <Grid2
+            sm={6}
+            xs={12}
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            {parent1 ? (
+              <CreatePlantInputGroup
+                checked={nameState.name1aSpecies}
+                switchName="name1aSpecies"
+                switchChangeHandler={handleInputChangeCheckBox}
+                textFieldLabel={
+                  parent1
+                    ? grandparents1
+                      ? "First grandparent's name"
+                      : "First parent Name"
+                    : ""
+                }
+                textFieldName="name1aName"
+                textFieldChangeHandler={handleInputNameChange}
+              />
+            ) : (
+              <></>
+            )}{" "}
+          </Grid2>
+          {grandparents1 ? (
+            <Grid2
+              sm={6}
+              xs={12}
+              sx={{ display: "flex", justifyContent: "center" }}
+            >
+              <CreatePlantInputGroup
+                checked={nameState.name1bSpecies}
+                switchName="name1bSpecies"
+                switchChangeHandler={handleInputChangeCheckBox}
+                textFieldLabel="Second grandparent's name"
+                textFieldName="name1bName"
+                textFieldChangeHandler={handleInputNameChange}
+              />
+            </Grid2>
+          ) : (
+            <></>
+          )}
+          <h3>
+            {parent2
+              ? grandparents2
+                ? "First grandparent's name"
+                : "Second parent's name"
+              : ""}
+          </h3>
+          <Grid2>
+            <FormControlLabel
+              label={"Convert second parent to grandparents"}
+              control={
+                <Switch
+                  checked={grandparents2}
+                  onChange={(event) => setGrandparents2(event.target.checked)}
+                ></Switch>
+              }
+            ></FormControlLabel>
+          </Grid2>
+          <Grid2
+            sm={6}
+            xs={12}
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            <CreatePlantInputGroup
+              checked={nameState.name2aSpecies}
+              switchName="name2aSpecies"
+              switchChangeHandler={handleInputChangeCheckBox}
+              textFieldLabel={
+                parent2
+                  ? grandparents2
+                    ? "First grandparent's name"
+                    : "Second parent's name"
+                  : ""
+              }
+              textFieldName="name2aName"
+              textFieldChangeHandler={handleInputNameChange}
+            />
+          </Grid2>
+          {grandparents2 ? (
+            <Grid2
+              sm={6}
+              xs={12}
+              sx={{ display: "flex", justifyContent: "center" }}
+            >
+              <CreatePlantInputGroup
+                checked={nameState.name2bSpecies}
+                switchName="name2bSpecies"
+                switchChangeHandler={handleInputChangeCheckBox}
+                textFieldLabel="Second grandparent's name"
+                textFieldName="name2bName"
+                textFieldChangeHandler={handleInputNameChange}
+              />
+            </Grid2>
+          ) : (
+            <></>
+          )}
+        </Grid2>
+        {/* <div> */}
+        {/* 
           
           @todo
-          - make component to group input-groups into form-sections? 
-          - make a somewhat better design. maybe use an AI for design-generation?
           - how to deploy
           
           */}
-          <InputGroup
-            name="name1aName"
-            labelText="Parent Name 1A:"
-            onInput={handleInputNameChange}
-          ></InputGroup>
-          <InputGroup
-            name="name1aSpecies"
-            checked={nameState.name1aSpecies}
-            type="checkbox"
-            onInput={handleInputChangeCheckBox}
-            labelText="Species??"
-          ></InputGroup>
-        </div>
-        <div>
-          <InputGroup
-            name="name1bName"
-            labelText="Parent Name 1B:"
-            onInput={handleInputNameChange}
-          ></InputGroup>
-
-          <label htmlFor="">Species?</label>
-          <input
-            type="checkbox"
-            name="name1bSpecies"
-            value={nameState.name1bSpecies ? "true" : "false"}
-            id=""
-            onChange={handleInputChangeCheckBox}
-          />
-        </div>
-        <br></br>
-        <div>
-          <InputGroup
-            name="name2aName"
-            labelText="Parent Name 2A:"
-            onInput={handleInputNameChange}
-          ></InputGroup>
-          <label htmlFor="">Species?</label>
-          <input
-            type="checkbox"
-            name="name2aSpecies"
-            value={nameState.name2aSpecies ? "true" : "false"}
-            id=""
-            onChange={handleInputChangeCheckBox}
-          />
-        </div>
-        <div>
-          <InputGroup
-            name="name2bName"
-            labelText="Parent Name 2B:"
-            onInput={handleInputNameChange}
-          ></InputGroup>
-          <label htmlFor="">Species?</label>
-          <input
-            type="checkbox"
-            name="name2bSpecies"
-            value={nameState.name2bSpecies ? "true" : "false"}
-            id=""
-            onChange={handleInputChangeCheckBox}
-          />
-        </div>
-        <br />
         {/* <label>
           From (trader): */}
         {/* {traders.length ? (

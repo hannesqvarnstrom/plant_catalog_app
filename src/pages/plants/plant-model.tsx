@@ -29,7 +29,7 @@ const formatParent = (
   nameA: { species: boolean; name: string } | undefined,
   nameB: { species: boolean; name: string } | undefined,
   numOfCharactersMut: number
-): JSX.Element | false => {
+): { resultNum: number; element: JSX.Element } | false => {
   const thereIsAParent = nameA !== undefined || nameB !== undefined;
   const thereAreTwoParents = nameA !== undefined && nameB !== undefined;
 
@@ -40,17 +40,23 @@ const formatParent = (
       numOfCharactersMut += parent.name.length;
 
       if (parent.species) {
-        return <i>{parent.name}</i>;
+        return { resultNum: numOfCharactersMut, element: <i>{parent.name}</i> };
       } else {
-        return <span>{"'" + parent.name + "'"}</span>;
+        return {
+          resultNum: numOfCharactersMut,
+          element: <span>{"'" + parent.name + "'"}</span>,
+        };
       }
     } else if (nameB !== undefined) {
       parent = nameB;
       numOfCharactersMut += parent.name.length;
       if (parent.species) {
-        return <i>{parent.name}</i>;
+        return { resultNum: numOfCharactersMut, element: <i>{parent.name}</i> };
       } else {
-        return <span>{"'" + parent.name + "'"}</span>;
+        return {
+          resultNum: numOfCharactersMut,
+          element: <span>{"'" + parent.name + "'"}</span>,
+        };
       }
     }
   } else if (thereAreTwoParents) {
@@ -60,29 +66,27 @@ const formatParent = (
       <span>
         (
         <span key={1}>
-          {nameA.species ? <i>{nameA.name}</i> : "'" + nameA.name + "'"}
+          {nameA.species ? <i>{nameA.name}</i> : "'" + nameA.name + "' "}
         </span>{" "}
         &times;
         <span key={2}>
-          {nameB.species ? <i>{nameB.name}</i> : "'" + nameB.name + "'"}
+          {nameB.species ? <i> {nameB.name}</i> : " '" + nameB.name + "'"}
         </span>
         )
       </span>
     );
-    return jsxEl;
+    return { resultNum: numOfCharactersMut, element: jsxEl };
   } else {
     return false;
   }
   return false;
 };
-
 function formatPlantName(nameData: PlantName) {
   let numCharacters = 0;
-  const spanPadding = { paddingRight: "0.15rem", paddingLeft: "0.15rem" };
   const nodes: ReactElement[] = [];
   nodes.push(
-    <span style={spanPadding}>
-      <i>{nameData.genusName}</i>
+    <span>
+      <i>{nameData.genusName} </i>
     </span>
   );
 
@@ -90,7 +94,7 @@ function formatPlantName(nameData: PlantName) {
 
   if (nameData.speciesName) {
     nodes.push(
-      <span style={spanPadding}>
+      <span>
         <i>{nameData.speciesName} </i>
       </span>
     );
@@ -98,7 +102,7 @@ function formatPlantName(nameData: PlantName) {
   }
 
   if (nameData.varietyName) {
-    nodes.push(<span style={spanPadding}>{`'${nameData.varietyName}'`} </span>);
+    nodes.push(<span>{`'${nameData.varietyName}'`} </span>);
     numCharacters += nameData.varietyName.length;
   }
 
@@ -109,31 +113,34 @@ function formatPlantName(nameData: PlantName) {
     if (parentB === false) {
       // do nothing?
     } else {
-      nodes.push(parentB);
+      numCharacters += parentB.resultNum;
+      nodes.push(parentB.element);
     }
   } else {
     if (parentB === false) {
-      nodes.push(parentA);
+      numCharacters += parentA.resultNum;
+      nodes.push(parentA.element);
     } else {
       // both not false
+      numCharacters += parentB.resultNum;
+      numCharacters += parentA.resultNum;
       nodes.push(
-        ...[parentA, <span key={"parentMult"}> &times; </span>, parentB]
+        ...[
+          parentA.element,
+          <span key={"parentMult"}> &times; </span>,
+          parentB.element,
+        ]
       );
     }
   }
-  console.log("numofcharacters:", numCharacters);
-  /**
-   * @todo
-   * - [ ] adapt font-size of paragraph to number of symbols?
-   */
-  let pStyle = { padding: "0", margin: "0", fontSize: "10px" };
 
-  return (
-    <p style={pStyle}>
-      {...nodes}
-      {/* {parentJSX} */}
-    </p>
-  );
+  let pStyle = {
+    padding: "0",
+    margin: "0",
+    // fontSize: getFontSizeFromNumOfCharacters(numCharacters),
+  };
+
+  return <p style={pStyle}>{...nodes}</p>;
 }
 
 // const somePlantNames: PlantName[] = [

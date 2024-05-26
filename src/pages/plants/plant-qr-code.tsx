@@ -9,11 +9,12 @@ export const FRONTEND_URL = "192.168.0.143:5173";
 
 export interface PlantQRCodeProps {
   plantData: { id: string; name: ShallowPlant["name"]; from: string };
+  fontSize: number;
   // pdfSettings: QRPDFSettings;
 }
 
 const PlantQRCode = React.forwardRef(
-  ({ plantData /*, pdfSettings*/ }: PlantQRCodeProps, ref) => {
+  ({ plantData, fontSize /*, pdfSettings*/ }: PlantQRCodeProps, ref) => {
     const { id, name } = plantData;
     const plantURL = `${FRONTEND_URL}/plants/${id}`;
     const plant = new PlantModel({ id, name });
@@ -29,7 +30,7 @@ const PlantQRCode = React.forwardRef(
           backgroundColor: "white",
           padding: "0.5rem",
           color: "black",
-          fontSize: "14px",
+          fontSize: fontSize + "px",
           // minWidth: "35mm",
           // maxWidth,
           // minHeight: "40mm",

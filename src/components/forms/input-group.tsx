@@ -1,4 +1,4 @@
-import { FormGroup, InputBase, InputLabel } from "@mui/material";
+import { FormGroup, InputBase, InputLabel, Paper, Switch } from "@mui/material";
 import React from "react";
 
 interface InputGroupState {
@@ -24,17 +24,24 @@ const InputGroup = ({
   }
 
   return (
-    <FormGroup style={FormGroupBaseStyle}>
-      <InputLabel>{labelText}</InputLabel>
-      <InputBase
-        id={id ?? labelText}
-        type={type}
-        name={name}
-        style={InputBaseStyle}
-        onInput={onInput}
-      ></InputBase>
-      {children}
-    </FormGroup>
+    <Paper
+      elevation={3}
+      style={{
+        padding: "10px",
+      }}
+    >
+      <FormGroup style={FormGroupBaseStyle}>
+        <InputLabel>{labelText}</InputLabel>
+        <InputBase
+          id={id ?? labelText}
+          type={type}
+          name={name}
+          style={InputBaseStyle}
+          onInput={onInput}
+        ></InputBase>
+        {children}
+      </FormGroup>
+    </Paper>
   );
 };
 
@@ -44,10 +51,10 @@ const InputBaseStyle = {
 };
 
 const FormGroupBaseStyle = {
-  borderColor: "grey",
-  borderWidth: "2px",
-  border: "1px solid grey",
-  borderRadius: "5px",
-  padding: "0.5rem",
+  // borderColor: "grey",
+  // borderWidth: "2px",
+  // border: "1px solid grey",
+  // borderRadius: "5px",
+  // padding: "0.5rem",
 };
 export default InputGroup;

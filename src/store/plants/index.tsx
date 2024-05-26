@@ -1,16 +1,24 @@
 import { create } from "zustand";
-import { getResourceWithIDAfterMS } from "../helpers";
+import { getResourceAfterMS, getResourceWithIDAfterMS } from "../helpers";
 import { devtools, persist } from "zustand/middleware";
 import { DeepPlant, ShallowPlant } from "Plants";
 
 async function addPlantToDatabase(plantArgs: ShallowPlant): Promise<DeepPlant> {
   const plant: ShallowPlant = {
     name: plantArgs.name,
+    settings: { fontSize: 15 },
   };
   if (plantArgs.from) plant.from = plantArgs.from;
   if (plantArgs.image) plant.image = plantArgs.image;
 
   return getResourceWithIDAfterMS(plant);
+}
+
+async function updatePlantInDatabase(
+  plantArgs: ShallowPlant,
+  id: string
+): Promise<DeepPlant> {
+  return getResourceAfterMS({ ...plantArgs, id });
 }
 
 interface PlantsState {
@@ -19,6 +27,7 @@ interface PlantsState {
   add: (args: ShallowPlant) => Promise<void>;
   remove: (id: string) => Promise<boolean>;
   devPurgeAll: () => void;
+  update: (args: ShallowPlant, id: string) => Promise<void>;
 }
 
 async function removePlantFromDatabase(id: string): Promise<boolean> {
@@ -41,6 +50,18 @@ export const usePlantStore = create<PlantsState>()(
             set((state) => {
               return {
                 plants: [...state.plants, resultingPlant],
+              };
+            });
+          },
+          update: async (args, id) => {
+            const resultingPlant = await updatePlantInDatabase(args, id);
+            set((state) => {
+              const plants = state.plants;
+              return {
+                plants: [
+                  ...plants.filter((plant) => plant.id !== id),
+                  resultingPlant,
+                ],
               };
             });
           },

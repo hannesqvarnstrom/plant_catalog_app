@@ -2,6 +2,8 @@ import PlantQRCode, { PlantQRCodeProps } from "./plant-qr-code";
 import jsPDF, { ImageOptions } from "jspdf";
 import html2canvas from "html2canvas";
 import React from "react";
+import { Box, Button, FormControl, Slider } from "@mui/material";
+import { usePlantStore } from "../../store/plants";
 
 // export interface QRPDFSettings {
 //   fontSize: string;
@@ -11,7 +13,13 @@ import React from "react";
 // }
 
 const PlantQRCodePDF = ({ plantData }: PlantQRCodeProps) => {
+  const plantsStore = usePlantStore();
+  const plant = plantsStore.plants.find((plant) => plant.id === plantData.id);
+  console.log("plant:", plant);
   const componentRef = React.useRef(null);
+  const [fontSize, setFontSize] = React.useState(
+    plant?.settings?.fontSize ?? 15
+  );
   // const defaultPDFSettings: QRPDFSettings = {
   //   fontSize: "10px",
   //   padding: "0.5rem",
@@ -35,6 +43,7 @@ const PlantQRCodePDF = ({ plantData }: PlantQRCodeProps) => {
       const height = pdf.internal.pageSize.getHeight();
 
       const canvas = await html2canvas(componentNode, { /*height,*/ width });
+
       // Convert the canvas to a data URL
       const dataUrl = canvas.toDataURL("image/png");
 
@@ -53,35 +62,50 @@ const PlantQRCodePDF = ({ plantData }: PlantQRCodeProps) => {
     }
   };
 
-  // const setSettingValue = (name: keyof QRPDFSettings, value: string) => {
-  //   let finalValue = "";
-  //   switch (name) {
-  //     case "fontSize":
-  //       finalValue = value + "px";
-  //       break;
-
-  //     case "minHeight":
-  //     case "minWidth":
-  //       finalValue = value + "mm";
-  //       break;
-
-  //     case "padding":
-  //       finalValue = value + "rem";
-  //       break;
-  //     default:
-  //       console.error("Input name not recognised", name);
-  //       return;
-  //   }
-  //   setPDFSettings({ ...pdfSettings, [name]: finalValue });
-  // };
-
   return (
     <div>
       <PlantQRCode
         ref={componentRef}
         plantData={plantData}
-        // pdfSettings={pdfSettings}
+        fontSize={fontSize}
       ></PlantQRCode>
+      <Box sx={{ width: "100%" }}>
+        <FormControl>
+          <Slider
+            marks
+            value={fontSize}
+            valueLabelDisplay="auto"
+            step={1}
+            min={10}
+            max={30}
+            onChange={(event, value) => {
+              /**
+               * @todo
+               * - SAVE this value in state -> backend, so its always the same for the plant
+               */
+              if (typeof value === "number") setFontSize(value);
+            }}
+          ></Slider>
+          (current fontsize: {fontSize})
+        </FormControl>
+        <Button
+          onClick={() => {
+            if (plant !== undefined) {
+              const newPlantObject = {
+                ...plant,
+                settings: { fontSize: fontSize },
+              };
+              plantsStore
+                .update(newPlantObject, plant.id)
+                .catch((e) =>
+                  console.error("error while updating fontsize", e)
+                );
+            }
+          }}
+        >
+          Save new fontsize value
+        </Button>
+      </Box>
       <button
         onClick={() => {
           void handleDownloadPDF();
@@ -89,51 +113,6 @@ const PlantQRCodePDF = ({ plantData }: PlantQRCodeProps) => {
       >
         Download PDF
       </button>
-
-      {/* <div>
-        <div>
-          <label htmlFor="fontsize">Font Size</label>
-          <input
-            type="text"
-            name="fontsize"
-            value={pdfSettings.fontSize}
-            onChange={(event) =>
-              setSettingValue("fontSize", event.target.value)
-            }
-          />
-        </div>
-        <div>
-          <label htmlFor="padding">Padding (in rem)</label>
-          <input
-            type="text"
-            name="padding"
-            value={pdfSettings.padding}
-          />
-          <button onClick={(event) => setSettingValue("padding", event.target.value)}>Save</button>
-        </div>
-        <div>
-          <label htmlFor="minWidth">Min Width (in millimeters) </label>
-          <input
-            type="text"
-            name="minWidth"
-            value={pdfSettings.minWidth}
-            onChange={(event) =>
-              setSettingValue("minWidth", event.target.value)
-            }
-          />
-        </div>
-        <div>
-          <label htmlFor="minHeight">Min Height (in millimeters)</label>
-          <input
-            type="text"
-            name="minHeight"
-            value={pdfSettings.minHeight}
-            onChange={(event) =>
-              setSettingValue("minHeight", event.target.value)
-            }
-          />
-        </div>
-      </div> */}
     </div>
   );
 };

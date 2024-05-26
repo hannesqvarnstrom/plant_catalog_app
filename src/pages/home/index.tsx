@@ -6,6 +6,8 @@ import {
   ThemeProvider,
   Typography,
   Paper,
+  Button,
+  Container,
 } from "@mui/material";
 import React from "react";
 import { Outlet } from "react-router-dom";
@@ -16,6 +18,7 @@ const Home: React.FC = () => {
   const toggleColorMode = () => {
     setMode((prev) => (prev === "dark" ? "light" : "dark"));
   };
+
   const defaultTheme = createTheme({ palette: { mode } });
 
   return (
@@ -41,10 +44,12 @@ const Home: React.FC = () => {
             sx={{ p: 2, pb: 0 }}
           >
             PotterExpert
+            <Button onClick={() => toggleColorMode()}>LIGHT/DARK</Button>
           </Typography>
         </Paper>
-
-        <Outlet />
+        <Container>
+          <Outlet />
+        </Container>
         <BottomAppBar></BottomAppBar>
       </ThemeProvider>
     </>
