@@ -9,17 +9,75 @@ import {
   Button,
   Container,
 } from "@mui/material";
-import React from "react";
-import { Outlet } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 import BottomAppBar from "../../layout/bottom-app-bar";
+import {
+  GoogleCredentialResponse,
+  GoogleLogin,
+  GoogleOAuthProvider,
+} from "@react-oauth/google";
+import { UserFromServer, useUsersStore } from "../../store/users";
+import httpAgent from "../../http";
 
 const Home: React.FC = () => {
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
   const [mode, setMode] = React.useState<PaletteMode>("dark");
+  const [authenticated, setAuthenticated] = useState(false);
+  const backendURL = import.meta.env.VITE_BACKEND_URL as string;
+  const navigate = useNavigate();
   const toggleColorMode = () => {
     setMode((prev) => (prev === "dark" ? "light" : "dark"));
   };
+  const usersStore = useUsersStore();
+
+  useEffect(() => {
+    if (usersStore.currentUser) {
+      httpAgent
+        .get<{
+          me: {
+            id: number;
+            email: string;
+          };
+        }>(backendURL + "/me")
+        .then(({ data }) => {
+          // do anything else?
+          setAuthenticated(true);
+        })
+        .catch((err) => {
+          console.log("(/me failed", err);
+          setAuthenticated(false);
+          usersStore.logOut();
+          navigate("/");
+        });
+    } else {
+      setAuthenticated(false);
+      usersStore.logOut();
+      navigate("/");
+    }
+  }, [usersStore.currentUser, backendURL, navigate]);
 
   const defaultTheme = createTheme({ palette: { mode } });
+  const handleLoginSuccess = async (response: GoogleCredentialResponse) => {
+    const token = response.credential;
+    if (!token) {
+      console.error("token missing");
+      return;
+    }
+    try {
+      const responseFromBackend = await httpAgent.post<UserFromServer>(
+        backendURL + "/auth/google",
+        {
+          providerToken: token,
+        }
+      );
+
+      const userPayload = responseFromBackend.data;
+      usersStore.setCurrentUser(userPayload);
+    } catch (error) {
+      console.error("failed to authenticate with backend", error);
+    }
+  };
 
   return (
     <>
@@ -45,10 +103,36 @@ const Home: React.FC = () => {
           >
             PotterExpert
             <Button onClick={() => toggleColorMode()}>LIGHT/DARK</Button>
+            {authenticated ? (
+              <span>
+                <p>Authenticated. UserId: {usersStore.currentUser?.id}</p>{" "}
+                <button
+                  onClick={() => {
+                    usersStore.logOut();
+                    navigate("/");
+                  }}
+                >
+                  Log out
+                </button>
+              </span>
+            ) : (
+              <></>
+            )}
           </Typography>
         </Paper>
         <Container>
-          <Outlet />
+          {!authenticated ? (
+            <GoogleOAuthProvider clientId={clientId}>
+              <GoogleLogin
+                onSuccess={handleLoginSuccess}
+                onError={() => {
+                  console.error("login failed");
+                }}
+              ></GoogleLogin>
+            </GoogleOAuthProvider>
+          ) : (
+            <Outlet />
+          )}
         </Container>
         <BottomAppBar></BottomAppBar>
       </ThemeProvider>

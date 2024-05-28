@@ -77,7 +77,7 @@ export const usePlantStore = create<PlantsState>()(
             return true;
           },
           devPurgeAll: () => {
-            set((state) => ({
+            set(() => ({
               plants: [],
             }));
           },
