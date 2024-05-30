@@ -19,6 +19,7 @@ import {
 } from "@react-oauth/google";
 import { UserFromServer, useUsersStore } from "../../store/users";
 import httpAgent from "../../http";
+import { usePlantStore } from "../../store/plants";
 
 const Home: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -30,6 +31,7 @@ const Home: React.FC = () => {
     setMode((prev) => (prev === "dark" ? "light" : "dark"));
   };
   const usersStore = useUsersStore();
+  const plantsStore = usePlantStore();
 
   useEffect(() => {
     if (usersStore.currentUser) {
@@ -56,6 +58,15 @@ const Home: React.FC = () => {
       navigate("/");
     }
   }, [usersStore.currentUser, backendURL, navigate]);
+
+  useEffect(() => {
+    async function fetchPlants() {
+      await plantsStore.fetch();
+    }
+    void fetchPlants().then(() => {
+      console.log("plants fetched");
+    });
+  }, [usersStore.currentUser]);
 
   const defaultTheme = createTheme({ palette: { mode } });
   const handleLoginSuccess = async (response: GoogleCredentialResponse) => {
@@ -91,7 +102,7 @@ const Home: React.FC = () => {
             top: 0,
             left: 0,
             right: 0,
-            zIndex: 1,
+            zIndex: 2,
           }}
         >
           {/* funkar bra som breadcrumb visare, eller något som säger vart du är någonstans i appen. @todo hitta hur man visar ens nuvarande path, eller route, programmatiskt? */}

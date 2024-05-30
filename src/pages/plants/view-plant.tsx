@@ -12,7 +12,9 @@ export interface ViewPlantProps {
 
 const ViewPlant: React.FC<ViewPlantProps> = ({ id }) => {
   const plantStore = usePlantStore();
-  const plant = plantStore.plants.find((plant) => plant.id === id);
+  const plant = plantStore.plants.find(
+    (plant) => plant.id === id || plant.id.toString() === id.toString()
+  );
 
   const { traders } = useTraderStore();
   if (!plant) {
@@ -52,6 +54,7 @@ const ViewPlant: React.FC<ViewPlantProps> = ({ id }) => {
           name: plant.name,
           id: plant.id,
           from: plant.from ?? "",
+          fontSize: plant.fontSize,
         }}
       ></PlantQRCodePDF>
       {/* <IconButton

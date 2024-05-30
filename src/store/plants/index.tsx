@@ -1,17 +1,20 @@
 import { create } from "zustand";
-import { getResourceAfterMS, getResourceWithIDAfterMS } from "../helpers";
+import { getResourceAfterMS /*, getResourceWithIDAfterMS*/ } from "../helpers";
 import { devtools, persist } from "zustand/middleware";
 import { DeepPlant, ShallowPlant } from "Plants";
+import httpAgent from "../../http";
 
 async function addPlantToDatabase(plantArgs: ShallowPlant): Promise<DeepPlant> {
   const plant: ShallowPlant = {
     name: plantArgs.name,
-    settings: { fontSize: 15 },
+    fontSize: "13px",
   };
   if (plantArgs.from) plant.from = plantArgs.from;
   if (plantArgs.image) plant.image = plantArgs.image;
-
-  return getResourceWithIDAfterMS(plant);
+  const newPlant = await httpAgent.post<DeepPlant>("/plants", plant);
+  console.log("newPlant:", newPlant);
+  return newPlant.data;
+  // return getResourceWithIDAfterMS(plant);
 }
 
 async function updatePlantInDatabase(
@@ -28,6 +31,7 @@ interface PlantsState {
   remove: (id: string) => Promise<boolean>;
   devPurgeAll: () => void;
   update: (args: ShallowPlant, id: string) => Promise<void>;
+  fetch: () => Promise<void>;
 }
 
 async function removePlantFromDatabase(id: string): Promise<boolean> {
@@ -44,6 +48,12 @@ export const usePlantStore = create<PlantsState>()(
     persist(
       (set) => {
         return {
+          fetch: async () => {
+            const { data } = await httpAgent.get<DeepPlant[]>("/plants");
+            console.log("data:", data);
+
+            set((prevState) => ({ ...prevState, plants: data }));
+          },
           add: async (args) => {
             console.log("args:", args);
             const resultingPlant = await addPlantToDatabase(args);

@@ -5,6 +5,7 @@ import PlantModel from "./plant-model";
 
 function Plants() {
   const { plants, devPurgeAll } = usePlantStore();
+  console.log(plants.map((plant) => plant.id));
   return (
     <div>
       <h2>PLANTS</h2>
@@ -20,7 +21,9 @@ function Plants() {
         <ul>
           {plants.map((plant, i) => (
             <li key={i}>
-              <Link to={plant.id}>{new PlantModel(plant).getName()}</Link>
+              <Link to={plant.id.toString()}>
+                {new PlantModel(plant).getName()}
+              </Link>
             </li>
           ))}
         </ul>

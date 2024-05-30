@@ -5,7 +5,6 @@ import { Container } from "@mui/system";
 import { /*redirect,*/ useNavigate } from "react-router";
 import { useTraderStore } from "../../store/traders/traders";
 import {
-  Checkbox,
   Divider,
   FormControl,
   FormControlLabel,
@@ -73,29 +72,6 @@ function PlantCreationForm() {
   });
 
   const [currentStep, setCurrentStep] = React.useState<number>(1);
-
-  const steps = {
-    scinameBase: {
-      number: 1,
-      text: "Enter the scientific name (where applicable) of your plant.",
-      name: "scinameBase",
-    },
-    hasParentage: {
-      number: 2,
-      text: "Does the plant have a parentage worth inputting?",
-      name: "hasParentage",
-    },
-    parentAHasParents: {
-      number: 3,
-      text: "Do you want to add another level of parentage? (e.g. grandparents)",
-      name: "parent1HasParents",
-    },
-    parentBHasParents: {
-      number: 4,
-      text: "Do you want to add another level of parentage? (e.g. grandparents)",
-      name: "parent2HasParents",
-    },
-  };
 
   const [parent1, setParent1] = React.useState<boolean>(true);
   const [grandparents1, setGrandparents1] = React.useState<boolean>(false);
@@ -169,7 +145,7 @@ function PlantCreationForm() {
         name2a: mapNamesToObjects(name2aName, name2aSpecies),
         name2b: mapNamesToObjects(name2bName, name2bSpecies),
       },
-      settings: { fontSize: 15 },
+      fontSize: "13px",
     });
     return navigate(-1);
   }
@@ -191,7 +167,7 @@ function PlantCreationForm() {
             <p>
               {new PlantModel({
                 id: "",
-                settings: { fontSize: 13 },
+                fontSize: "13px",
                 name: {
                   genusName: nameState.genusName,
                   speciesName: nameState.speciesName,
@@ -288,23 +264,16 @@ function PlantCreationForm() {
           style={{ marginBottom: "15px", marginTop: "15px" }}
         />
         <Grid2 container spacing={2}>
-          <h3>
-            {parent1
-              ? grandparents1
-                ? "First grandparent's name"
-                : "First parent's name"
-              : ""}
-          </h3>
+          <Grid2 sm={12}>
+            <h3>
+              {parent1
+                ? grandparents1
+                  ? "First grandparent's name"
+                  : "First parent's name"
+                : ""}
+            </h3>
+          </Grid2>
           <Grid2>
-            {/* <FormControlLabel
-              label={""}
-              control={
-                <Switch
-                  checked={parent1}
-                  onChange={(event) => setParent1(event.target.checked)}
-                ></Switch>
-              }
-            ></FormControlLabel> */}
             <FormControlLabel
               label={"Convert first parent to grandparents"}
               control={
@@ -357,13 +326,15 @@ function PlantCreationForm() {
           ) : (
             <></>
           )}
-          <h3>
-            {parent2
-              ? grandparents2
-                ? "First grandparent's name"
-                : "Second parent's name"
-              : ""}
-          </h3>
+          <Grid2 sm={12}>
+            <h3>
+              {parent2
+                ? grandparents2
+                  ? "First grandparent's name"
+                  : "Second parent's name"
+                : ""}
+            </h3>
+          </Grid2>
           <Grid2>
             <FormControlLabel
               label={"Convert second parent to grandparents"}

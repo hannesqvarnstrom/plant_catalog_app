@@ -17,9 +17,7 @@ const PlantQRCodePDF = ({ plantData }: PlantQRCodeProps) => {
   const plant = plantsStore.plants.find((plant) => plant.id === plantData.id);
   console.log("plant:", plant);
   const componentRef = React.useRef(null);
-  const [fontSize, setFontSize] = React.useState(
-    plant?.settings?.fontSize ?? 15
-  );
+  const [fontSize, setFontSize] = React.useState(plant?.fontSize ?? "13px");
   // const defaultPDFSettings: QRPDFSettings = {
   //   fontSize: "10px",
   //   padding: "0.5rem",
@@ -61,7 +59,7 @@ const PlantQRCodePDF = ({ plantData }: PlantQRCodeProps) => {
       console.error("error trying to download pdf", e);
     }
   };
-
+  console.log("fontSize:", fontSize);
   return (
     <div>
       <PlantQRCode
@@ -73,7 +71,7 @@ const PlantQRCodePDF = ({ plantData }: PlantQRCodeProps) => {
         <FormControl>
           <Slider
             marks
-            value={fontSize}
+            value={Number(fontSize.slice(0, fontSize.indexOf("px")))}
             valueLabelDisplay="auto"
             step={1}
             min={10}
@@ -83,7 +81,7 @@ const PlantQRCodePDF = ({ plantData }: PlantQRCodeProps) => {
                * @todo
                * - SAVE this value in state -> backend, so its always the same for the plant
                */
-              if (typeof value === "number") setFontSize(value);
+              if (typeof value === "number") setFontSize(`${value}px`);
             }}
           ></Slider>
           (current fontsize: {fontSize})

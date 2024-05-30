@@ -25,9 +25,7 @@ declare module 'Plants' {
         },
         from?: string,
         image?: string,
-        settings: {
-            fontSize: number
-        }
+        fontSize: string
         // ETC
     }
 
