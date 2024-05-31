@@ -91,7 +91,7 @@ const PlantQRCodePDF = ({ plantData }: PlantQRCodeProps) => {
             if (plant !== undefined) {
               const newPlantObject = {
                 ...plant,
-                settings: { fontSize: fontSize },
+                fontSize: fontSize,
               };
               plantsStore
                 .update(newPlantObject, plant.id)

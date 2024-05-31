@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { getResourceAfterMS /*, getResourceWithIDAfterMS*/ } from "../helpers";
 import { devtools, persist } from "zustand/middleware";
 import { DeepPlant, ShallowPlant } from "Plants";
 import httpAgent from "../../http";
@@ -18,10 +17,18 @@ async function addPlantToDatabase(plantArgs: ShallowPlant): Promise<DeepPlant> {
 }
 
 async function updatePlantInDatabase(
-  plantArgs: ShallowPlant,
+  plantArgs: Partial<ShallowPlant>,
   id: string
 ): Promise<DeepPlant> {
-  return getResourceAfterMS({ ...plantArgs, id });
+  const plant: Partial<ShallowPlant> = {};
+  if (plantArgs.fontSize) plant.fontSize = plantArgs.fontSize;
+  console.log("plant.fontSize :", plant.fontSize);
+  if (plantArgs.name) plant.name = plantArgs.name;
+  if (plantArgs.from) plant.from = plantArgs.from;
+  if (plantArgs.image) plant.image = plantArgs.image;
+  const newPlant = await httpAgent.put<DeepPlant>("/plants/" + id, plant);
+  console.log("newPlant:", newPlant);
+  return newPlant.data;
 }
 
 interface PlantsState {
@@ -30,7 +37,7 @@ interface PlantsState {
   add: (args: ShallowPlant) => Promise<void>;
   remove: (id: string) => Promise<boolean>;
   devPurgeAll: () => void;
-  update: (args: ShallowPlant, id: string) => Promise<void>;
+  update: (args: Partial<ShallowPlant>, id: string) => Promise<void>;
   fetch: () => Promise<void>;
 }
 

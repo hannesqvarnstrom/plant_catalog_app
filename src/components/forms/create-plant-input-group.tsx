@@ -15,6 +15,7 @@ interface CreatePlantInputGroupProps {
   textFieldLabel: string;
   textFieldName: string;
   textFieldChangeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  initialValue?: string;
 }
 
 function CreatePlantInputGroup({
@@ -24,6 +25,7 @@ function CreatePlantInputGroup({
   textFieldLabel,
   textFieldName,
   textFieldChangeHandler,
+  initialValue,
 }: CreatePlantInputGroupProps) {
   return (
     <>
@@ -34,6 +36,7 @@ function CreatePlantInputGroup({
             variant="outlined"
             name={textFieldName}
             onChange={textFieldChangeHandler}
+            value={initialValue}
           />
           <FormControlLabel
             label={"Species"}

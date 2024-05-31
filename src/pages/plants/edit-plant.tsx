@@ -5,6 +5,7 @@ import { Container } from "@mui/system";
 import { /*redirect,*/ useNavigate } from "react-router";
 import { useTraderStore } from "../../store/traders/traders";
 import {
+  Button,
   Divider,
   FormControl,
   FormControlLabel,
@@ -14,54 +15,40 @@ import {
 } from "@mui/material";
 import CreatePlantInputGroup from "../../components/forms/create-plant-input-group";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+import { PlantCreationFormData, PlantNameFields } from "./plant-form";
+import { DeepPlant } from "Plants";
 import PlantModel from "./plant-model";
 
+export type PlantEditProps = DeepPlant & { closeEdit: () => void };
+// export interface PlantEditProps extends DeepPlant {}
+
 /**
- * Plant Creation Form Component (break into file)
+ * Plant Edit Form Component (break into file)
  */
-
-export interface PlantCreationFormData {
-  //   name: string;
-  from?: string;
-  type?: string;
-  name: PlantNameFields;
-}
-
-export interface PlantNameFields {
-  genusName: string;
-  speciesName?: string;
-  varietyName?: string;
-
-  name1aSpecies?: boolean;
-  name1aName?: string;
-
-  name1bSpecies?: boolean;
-  name1bName?: string;
-
-  name2aSpecies?: boolean;
-  name2aName?: string;
-
-  name2bSpecies?: boolean;
-  name2bName?: string;
-}
-
-function PlantCreationForm() {
+function PlantEditForm({ name, fontSize, id, closeEdit }: PlantEditProps) {
+  /**
+   * 1. get plant current data (1. route parameter -> 2. get from store by id?)
+   * 2. make reverse mapper to populate current data (or just hardcode)
+   * 3. use some update-endpoint (PUT /plants/:plantId (not made yet))
+   *
+   * 4. perhaps place this INSIDE the view-plant component, so you can see the results in the pdf-preview
+   */
   const navigate = useNavigate();
   const { traders } = useTraderStore();
-  const { add } = usePlantStore();
+  const { update } = usePlantStore();
 
   const [nameState, setNameState] = React.useState<PlantNameFields>({
-    genusName: "",
-    speciesName: "",
-    varietyName: "",
-    name1aSpecies: false,
-    name1aName: "",
-    name1bSpecies: false,
-    name1bName: "",
-    name2aSpecies: false,
-    name2aName: "",
-    name2bSpecies: false,
-    name2bName: "",
+    genusName: name.genusName,
+    speciesName: name.speciesName,
+    varietyName: name.varietyName,
+    name1aSpecies: name.name1a?.species,
+    name1aName: name.name1a?.name,
+    name1bSpecies: name.name1b?.species,
+    name1bName: name.name1b?.name,
+    name2aSpecies: name.name2a?.species,
+    name2aName: name.name2a?.name,
+    name2bSpecies: name.name2b?.species,
+    name2bName: name.name2b?.name,
   });
 
   const [formData, setFormData] = React.useState<
@@ -71,11 +58,15 @@ function PlantCreationForm() {
     type: "",
   });
 
-  const [parent1, setParent1] = React.useState<boolean>(true);
-  const [grandparents1, setGrandparents1] = React.useState<boolean>(false);
+  const [parent1, setParent1] = React.useState<boolean>(!!nameState.name1aName);
+  const [grandparents1, setGrandparents1] = React.useState<boolean>(
+    !!nameState.name1bName
+  );
 
-  const [parent2, setParent2] = React.useState<boolean>(true);
-  const [grandparents2, setGrandparents2] = React.useState<boolean>(false);
+  const [parent2, setParent2] = React.useState<boolean>(!!nameState.name2aName);
+  const [grandparents2, setGrandparents2] = React.useState<boolean>(
+    !!nameState.name2bName
+  );
 
   function handleInputChangeCheckBox(
     event: React.ChangeEvent<HTMLInputElement>
@@ -132,25 +123,30 @@ function PlantCreationForm() {
       name2bName,
     } = nameState;
 
-    await add({
-      ...formData,
-      name: {
-        genusName,
-        speciesName,
-        varietyName,
-        name1a: mapNamesToObjects(name1aName, name1aSpecies),
-        name1b: mapNamesToObjects(name1bName, name1bSpecies),
-        name2a: mapNamesToObjects(name2aName, name2aSpecies),
-        name2b: mapNamesToObjects(name2bName, name2bSpecies),
+    await update(
+      {
+        ...formData,
+        name: {
+          genusName,
+          speciesName,
+          varietyName,
+          name1a: mapNamesToObjects(name1aName, name1aSpecies),
+          name1b: mapNamesToObjects(name1bName, name1bSpecies),
+          name2a: mapNamesToObjects(name2aName, name2aSpecies),
+          name2b: mapNamesToObjects(name2bName, name2bSpecies),
+        },
       },
-      fontSize: "13px",
-    });
+      id
+    );
     return navigate(-1);
   }
 
   return (
     <Container>
-      <button onClick={() => navigate(-1)}>Back</button>
+      {/* <button onClick={() => navigate(-1)}>Back</button> */}
+      <Button variant="outlined" onClick={closeEdit}>
+        Back
+      </Button>
       <form
         onSubmit={handleSubmit}
         style={{
@@ -159,7 +155,7 @@ function PlantCreationForm() {
           flexDirection: "column",
         }}
       >
-        <h4>Create a new plant</h4>
+        <h4>Editing {new PlantModel({ name, fontSize, id }).getName()}</h4>
         <Grid2 container spacing={2} display="flex">
           <Grid2
             md={4}
@@ -260,6 +256,7 @@ function PlantCreationForm() {
                 }
                 textFieldName="name1aName"
                 textFieldChangeHandler={handleInputNameChange}
+                initialValue={nameState.name1aName}
               />
             ) : (
               <></>
@@ -278,6 +275,7 @@ function PlantCreationForm() {
                 textFieldLabel="Second grandparent's name"
                 textFieldName="name1bName"
                 textFieldChangeHandler={handleInputNameChange}
+                initialValue={nameState.name1bName}
               />
             </Grid2>
           ) : (
@@ -321,6 +319,7 @@ function PlantCreationForm() {
               }
               textFieldName="name2aName"
               textFieldChangeHandler={handleInputNameChange}
+              initialValue={nameState.name2aName}
             />
           </Grid2>
           {grandparents2 ? (
@@ -336,6 +335,7 @@ function PlantCreationForm() {
                 textFieldLabel="Second grandparent's name"
                 textFieldName="name2bName"
                 textFieldChangeHandler={handleInputNameChange}
+                initialValue={nameState.name2bName}
               />
             </Grid2>
           ) : (
@@ -381,4 +381,4 @@ function PlantCreationForm() {
   );
 }
 
-export default PlantCreationForm;
+export default PlantEditForm;
