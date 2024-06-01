@@ -43,7 +43,7 @@ const Home: React.FC = () => {
           };
         }>(backendURL + "/me")
         .then(() => {
-          navigate("/plants");
+          // navigate("/plants");
           setAuthenticated(true);
         })
         .catch((err) => {
