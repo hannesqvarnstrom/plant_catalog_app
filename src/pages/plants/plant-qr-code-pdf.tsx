@@ -54,12 +54,12 @@ const PlantQRCodePDF = ({ plantData }: PlantQRCodeProps) => {
         height,
       };
       pdf.addImage(imageOptions);
-      pdf.save("plant_qr_code" + new Date().toISOString() + ".pdf");
+      pdf.save("plant_qr_" + plantData.id + ".pdf");
     } catch (e) {
       console.error("error trying to download pdf", e);
     }
   };
-  console.log("fontSize:", fontSize);
+  // console.log("fontSize:", fontSize);
   return (
     <div>
       <PlantQRCode
@@ -76,11 +76,7 @@ const PlantQRCodePDF = ({ plantData }: PlantQRCodeProps) => {
             step={1}
             min={10}
             max={30}
-            onChange={(event, value) => {
-              /**
-               * @todo
-               * - SAVE this value in state -> backend, so its always the same for the plant
-               */
+            onChange={(_, value) => {
               if (typeof value === "number") setFontSize(`${value}px`);
             }}
           ></Slider>

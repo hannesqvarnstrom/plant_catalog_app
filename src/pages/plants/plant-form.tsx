@@ -3,7 +3,7 @@ import React from "react";
 import { usePlantStore } from "../../store/plants";
 import { Container } from "@mui/system";
 import { /*redirect,*/ useNavigate } from "react-router";
-import { useTraderStore } from "../../store/traders/traders";
+// import { useTraderStore } from "../../store/traders/traders";
 import {
   Divider,
   FormControl,
@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import CreatePlantInputGroup from "../../components/forms/create-plant-input-group";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import PlantModel from "./plant-model";
 
 /**
  * Plant Creation Form Component (break into file)
@@ -47,7 +46,7 @@ export interface PlantNameFields {
 
 function PlantCreationForm() {
   const navigate = useNavigate();
-  const { traders } = useTraderStore();
+  // const { traders } = useTraderStore();
   const { add } = usePlantStore();
 
   const [nameState, setNameState] = React.useState<PlantNameFields>({
@@ -64,17 +63,17 @@ function PlantCreationForm() {
     name2bName: "",
   });
 
-  const [formData, setFormData] = React.useState<
+  const [formData /*, setFormData*/] = React.useState<
     Omit<PlantCreationFormData, "name">
   >({
     from: "",
     type: "",
   });
 
-  const [parent1, setParent1] = React.useState<boolean>(true);
+  const [parent1 /*, setParent1*/] = React.useState<boolean>(true);
   const [grandparents1, setGrandparents1] = React.useState<boolean>(false);
 
-  const [parent2, setParent2] = React.useState<boolean>(true);
+  const [parent2 /*, setParent2*/] = React.useState<boolean>(true);
   const [grandparents2, setGrandparents2] = React.useState<boolean>(false);
 
   function handleInputChangeCheckBox(

@@ -1,5 +1,4 @@
 import {
-  Divider,
   FormControl,
   FormControlLabel,
   FormGroup,

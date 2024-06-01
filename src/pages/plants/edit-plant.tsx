@@ -3,7 +3,7 @@ import React from "react";
 import { usePlantStore } from "../../store/plants";
 import { Container } from "@mui/system";
 import { /*redirect,*/ useNavigate } from "react-router";
-import { useTraderStore } from "../../store/traders/traders";
+// import { useTraderStore } from "../../store/traders/traders";
 import {
   Button,
   Divider,
@@ -34,7 +34,7 @@ function PlantEditForm({ name, fontSize, id, closeEdit }: PlantEditProps) {
    * 4. perhaps place this INSIDE the view-plant component, so you can see the results in the pdf-preview
    */
   const navigate = useNavigate();
-  const { traders } = useTraderStore();
+  // const { traders } = useTraderStore();
   const { update } = usePlantStore();
 
   const [nameState, setNameState] = React.useState<PlantNameFields>({
@@ -51,19 +51,23 @@ function PlantEditForm({ name, fontSize, id, closeEdit }: PlantEditProps) {
     name2bName: name.name2b?.name,
   });
 
-  const [formData, setFormData] = React.useState<
+  const [formData /*, setFormData*/] = React.useState<
     Omit<PlantCreationFormData, "name">
   >({
     from: "",
     type: "",
   });
 
-  const [parent1, setParent1] = React.useState<boolean>(!!nameState.name1aName);
+  const [parent1 /*, setParent1*/] = React.useState<boolean>(
+    !!nameState.name1aName
+  );
   const [grandparents1, setGrandparents1] = React.useState<boolean>(
     !!nameState.name1bName
   );
 
-  const [parent2, setParent2] = React.useState<boolean>(!!nameState.name2aName);
+  const [parent2 /*, setParent2*/] = React.useState<boolean>(
+    !!nameState.name2aName
+  );
   const [grandparents2, setGrandparents2] = React.useState<boolean>(
     !!nameState.name2bName
   );

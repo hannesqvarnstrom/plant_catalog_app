@@ -134,7 +134,7 @@ function formatPlantName(nameData: PlantName) {
     }
   }
 
-  let pStyle = {
+  const pStyle = {
     padding: "0",
     margin: "0",
     // fontSize: getFontSizeFromNumOfCharacters(numCharacters),
@@ -218,15 +218,15 @@ function formatPlantName(nameData: PlantName) {
 
 export default class PlantModel {
   private name: ShallowPlant["name"];
-  private from?: string;
-  private image?: string;
+  // private from?: string;
+  // private image?: string;
   private id?: string;
   public isDeep = () => !!this.id;
 
   constructor(args: ShallowPlant | DeepPlant) {
     this.name = args.name;
-    this.from = args.from;
-    this.image = args.image;
+    // this.from = args.from;
+    // this.image = args.image;
   }
 
   public getName(): ReactElement {

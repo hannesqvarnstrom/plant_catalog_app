@@ -42,7 +42,7 @@ const Home: React.FC = () => {
             email: string;
           };
         }>(backendURL + "/me")
-        .then(({ data }) => {
+        .then(() => {
           // do anything else?
           setAuthenticated(true);
         })
