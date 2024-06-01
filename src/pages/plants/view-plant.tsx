@@ -1,6 +1,6 @@
 import { Button, IconButton } from "@mui/material";
 import { usePlantStore } from "../../store/plants";
-import { useTraderStore } from "../../store/traders/traders";
+// import { useTraderStore } from "../../store/traders/traders";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PlantQRCodePDF from "./plant-qr-code-pdf";
 import React, { useState } from "react";
@@ -17,7 +17,7 @@ const ViewPlant: React.FC<ViewPlantProps> = ({ id }) => {
     (plant) => plant.id === id || plant.id.toString() === id.toString()
   );
   const [editFormOpen, setEditFormOpen] = useState(false);
-  const { traders } = useTraderStore();
+  // const { traders } = useTraderStore();
   if (!plant) {
     return <div>Could not find plant. Go back to plants and try again</div>;
   }
@@ -38,12 +38,12 @@ const ViewPlant: React.FC<ViewPlantProps> = ({ id }) => {
       <div>{plantModel.getName()}</div>
       {/* <span onClick={() => setEditFormOpen(true)}>Edit plant</span> */}
 
-      <p>
+      {/* <p>
         Trader:{" "}
         {plant.from
           ? traders.find((trader) => trader.id === plant.from)?.name
           : "Unknown"}
-      </p>
+      </p> */}
       <small>(ID: {plant.id})</small>
       <IconButton
         onClick={() => {

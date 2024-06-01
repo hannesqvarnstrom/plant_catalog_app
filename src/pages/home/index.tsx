@@ -43,7 +43,7 @@ const Home: React.FC = () => {
           };
         }>(backendURL + "/me")
         .then(() => {
-          // do anything else?
+          navigate("/plants");
           setAuthenticated(true);
         })
         .catch((err) => {
@@ -112,11 +112,10 @@ const Home: React.FC = () => {
             component="div"
             sx={{ p: 2, pb: 0 }}
           >
-            PotterExpert
+            Plant Catalog
             <Button onClick={() => toggleColorMode()}>LIGHT/DARK</Button>
             {authenticated ? (
               <span>
-                <p>Authenticated. UserId: {usersStore.currentUser?.id}</p>{" "}
                 <button
                   onClick={() => {
                     usersStore.logOut();
