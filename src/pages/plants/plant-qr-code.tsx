@@ -5,8 +5,6 @@ import React from "react";
 import PlantModel from "./plant-model";
 // import { QRPDFSettings } from "./plant-qr-code-pdf";
 
-export const FRONTEND_URL = "192.168.0.143:5173";
-
 export interface PlantQRCodeProps {
   plantData: { id: string; name: ShallowPlant["name"]; from: string };
   fontSize: string;
@@ -16,7 +14,8 @@ export interface PlantQRCodeProps {
 const PlantQRCode = React.forwardRef(
   ({ plantData, fontSize /*, pdfSettings*/ }: PlantQRCodeProps, ref) => {
     const { id, name } = plantData;
-    const plantURL = `${FRONTEND_URL}/plants/${id}`;
+    const frontendUrl = import.meta.env.VITE_FRONTEND_URL as string;
+    const plantURL = `${frontendUrl}/plants/${id}`;
     const plant = new PlantModel({ id, name, fontSize });
     // const maxWidth = window.innerWidth <= 768 ? "default" : "85%";
 
