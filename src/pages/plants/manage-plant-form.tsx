@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import React, { ChangeEventHandler } from "react";
+import React from "react";
 import { usePlantStore } from "../../store/plants";
 import { Container } from "@mui/system";
 import { /*redirect,*/ useNavigate } from "react-router";
@@ -198,13 +198,18 @@ function ManagePlantForm({
     }
   }
 
-  function handleInputChange(
-    event:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLSelectElement>
-      | React.ChangeEvent<HTMLTextAreaElement>
-      | SelectChangeEvent
-  ) {
+  function handleInputChangeSelect(event: SelectChangeEvent) {
+    const { value } = event.target;
+    const name = event.target.name as keyof {
+      location?: string;
+      fromTrader?: string;
+      type?: PlantTypeCol;
+    };
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { value } = event.target;
     const name = event.target.name as keyof {
       location?: string;
@@ -432,7 +437,7 @@ function ManagePlantForm({
             value={formData.fromTrader === null ? "none" : formData.fromTrader}
             name="fromTrader"
             id="fromTrader"
-            onChange={handleInputChange}
+            onChange={handleInputChangeSelect}
             aria-labelledby="fromTrader"
           >
             <MenuItem value={"none"} key={"none"}>
