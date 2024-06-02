@@ -20,6 +20,7 @@ import {
 import { UserFromServer, useUsersStore } from "../../store/users";
 import httpAgent from "../../http";
 import { usePlantStore } from "../../store/plants";
+import { useTraderStore } from "../../store/traders/traders";
 
 const Home: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -32,6 +33,7 @@ const Home: React.FC = () => {
   };
   const usersStore = useUsersStore();
   const plantsStore = usePlantStore();
+  const tradersStore = useTraderStore();
 
   useEffect(() => {
     if (usersStore.currentUser) {
@@ -46,8 +48,7 @@ const Home: React.FC = () => {
           // navigate("/plants");
           setAuthenticated(true);
         })
-        .catch((err) => {
-          console.log("(/me failed", err);
+        .catch(() => {
           setAuthenticated(false);
           usersStore.logOut();
           navigate("/");
@@ -60,11 +61,13 @@ const Home: React.FC = () => {
   }, [usersStore.currentUser, backendURL, navigate]);
 
   useEffect(() => {
-    async function fetchPlants() {
+    async function initStores() {
       await plantsStore.fetch();
+      await tradersStore.fetch();
     }
-    void fetchPlants().then(() => {
-      console.log("plants fetched");
+
+    void initStores().then(() => {
+      console.log("store init");
     });
   }, [usersStore.currentUser]);
 

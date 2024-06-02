@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import React from "react";
 import { TraderCreationArgs } from "TraderTypes";
 import { useTraderStore } from "../../store/traders/traders";
 import { useNavigate } from "react-router";
 import { Container } from "@mui/system";
-import { Button } from "@mui/material";
+import { Button, FormControl, FormGroup, TextField } from "@mui/material";
+import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 
 /**
  * Trader Creation Form Comopnent (break into file)
@@ -11,7 +13,6 @@ import { Button } from "@mui/material";
 function TraderCreationForm() {
   const [formData, setFormData] = React.useState<TraderCreationArgs>({
     name: "",
-    description: "",
     location: "",
   });
   const traderStore = useTraderStore();
@@ -22,47 +23,59 @@ function TraderCreationForm() {
     setFormData({ ...formData, [name]: value });
   }
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>
+  ): Promise<void> {
     event.preventDefault();
+    console.log("event:", event);
     await traderStore.add(formData);
-    return navigate(-1);
+    return navigate("/");
   }
 
   return (
     <Container>
       <Button onClick={() => navigate(-1)}> Back</Button>
-      <form onSubmit={void handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <h4>Create a new trader</h4>
-        <label>
-          Name:
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-          />
-        </label>
-        <br />
-        <label>
-          Description:
-          <input
-            type="text"
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-          />
-        </label>
-        <label>
-          From:
-          <input
-            type="text"
-            name="location"
-            value={formData.location}
-            onChange={handleInputChange}
-          />
-        </label>
-        <br />
-        <button type="submit">Submit</button>
+        <Grid2 container spacing={2} display="flex">
+          <Grid2
+            md={4}
+            sm={12}
+            xs={12}
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            <FormControl component="fieldset" variant="outlined">
+              <FormGroup>
+                <TextField
+                  required={true}
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  label="Name:"
+                />
+              </FormGroup>
+            </FormControl>
+          </Grid2>
+          <Grid2
+            md={4}
+            sm={12}
+            xs={12}
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            <FormControl component="fieldset" variant="outlined">
+              <FormGroup>
+                <TextField
+                  required={false}
+                  name="location"
+                  value={formData.location}
+                  onChange={handleInputChange}
+                  label="Location:"
+                />
+              </FormGroup>
+            </FormControl>
+          </Grid2>
+        </Grid2>
+        <Button type="submit">Submit</Button>
       </form>
     </Container>
   );

@@ -10,6 +10,10 @@ async function addPlantToDatabase(plantArgs: ShallowPlant): Promise<DeepPlant> {
   };
   if (plantArgs.from) plant.from = plantArgs.from;
   if (plantArgs.image) plant.image = plantArgs.image;
+  if (plantArgs.fromTrader) plant.fromTrader = String(plantArgs.fromTrader);
+  if (plantArgs.location) plant.location = plantArgs.location;
+  if (plantArgs.type) plant.type = plantArgs.type;
+
   const newPlant = await httpAgent.post<DeepPlant>("/plants", plant);
   console.log("newPlant:", newPlant);
   return newPlant.data;
@@ -22,12 +26,15 @@ async function updatePlantInDatabase(
 ): Promise<DeepPlant> {
   const plant: Partial<ShallowPlant> = {};
   if (plantArgs.fontSize) plant.fontSize = plantArgs.fontSize;
-  console.log("plant.fontSize :", plant.fontSize);
+
   if (plantArgs.name) plant.name = plantArgs.name;
-  if (plantArgs.from) plant.from = plantArgs.from;
-  if (plantArgs.image) plant.image = plantArgs.image;
+  if (plantArgs.fromTrader) plant.fromTrader = String(plantArgs.fromTrader);
+  if (plantArgs.location !== undefined || plantArgs.location === "")
+    plant.location = plantArgs.location;
+  if (plantArgs.type) plant.type = plantArgs.type;
+
   const newPlant = await httpAgent.put<DeepPlant>("/plants/" + id, plant);
-  console.log("newPlant:", newPlant);
+
   return newPlant.data;
 }
 

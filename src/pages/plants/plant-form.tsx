@@ -3,7 +3,7 @@ import React from "react";
 import { usePlantStore } from "../../store/plants";
 import { Container } from "@mui/system";
 import { /*redirect,*/ useNavigate } from "react-router";
-// import { useTraderStore } from "../../store/traders/traders";
+import { useTraderStore } from "../../store/traders/traders";
 import {
   Divider,
   FormControl,
@@ -14,15 +14,19 @@ import {
 } from "@mui/material";
 import CreatePlantInputGroup from "../../components/forms/create-plant-input-group";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+import { PlantTypeCol } from "Plants";
 
 /**
  * Plant Creation Form Component (break into file)
  */
 
+/**
+ * UN USED - remove when feels safe
+ */
 export interface PlantCreationFormData {
-  //   name: string;
-  from?: string;
-  type?: string;
+  location?: string;
+  fromTrader?: string;
+  type?: PlantTypeCol;
   name: PlantNameFields;
 }
 
@@ -44,11 +48,11 @@ export interface PlantNameFields {
   name2bName?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function PlantCreationForm() {
   const navigate = useNavigate();
-  // const { traders } = useTraderStore();
+  const { traders } = useTraderStore();
   const { add } = usePlantStore();
-
   const [nameState, setNameState] = React.useState<PlantNameFields>({
     genusName: "",
     speciesName: "",
@@ -63,11 +67,12 @@ function PlantCreationForm() {
     name2bName: "",
   });
 
-  const [formData /*, setFormData*/] = React.useState<
+  const [formData, setFormData] = React.useState<
     Omit<PlantCreationFormData, "name">
   >({
-    from: "",
-    type: "",
+    location: "",
+    fromTrader: "",
+    type: "cutting",
   });
 
   const [parent1 /*, setParent1*/] = React.useState<boolean>(true);
@@ -94,6 +99,21 @@ function PlantCreationForm() {
     const name = event.target.name as keyof PlantNameFields;
 
     setNameState((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function handleInputChange(
+    event:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>
+  ) {
+    const { value } = event.target;
+    const name = event.target.name as keyof {
+      location?: string;
+      fromTrader?: string;
+      type?: PlantTypeCol;
+    };
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -145,6 +165,19 @@ function PlantCreationForm() {
       fontSize: "13px",
     });
     return navigate(-1);
+  }
+
+  function setPlantType(event: React.ChangeEvent<HTMLSelectElement>) {
+    const perhapsType = event.target.value;
+    if (
+      perhapsType === "cutting" ||
+      perhapsType === "seed" ||
+      perhapsType === "rhizome" ||
+      perhapsType === "none"
+    ) {
+      const type = perhapsType as PlantTypeCol;
+      setFormData((prev) => ({ ...prev, type }));
+    }
   }
 
   return (
@@ -341,43 +374,50 @@ function PlantCreationForm() {
             <></>
           )}
         </Grid2>
-        {/* <label>
-          From (trader): */}
-        {/* {traders.length ? (
-            <select name="from" onChange={handleInputChange}>
-              {/* @todo implement this */}
-        {/* <option key={"unknown trader"} value={user.id}>
-                Me
-              </option> */}
-        {/* <option key={"unknown trader"} value="">
-                Unknown
+        <label>
+          From (trader):
+          {traders.length ? (
+            <select
+              defaultValue="none"
+              name="fromTrader"
+              onChange={handleInputChange}
+            >
+              <option key={"none"} value={undefined}>
+                None
               </option>
               {traders.map((trader, i) => (
                 <option key={trader.name + i} value={trader.id}>
                   {trader.name}
                 </option>
               ))}
-            </select> */}
-        {/* ) : ( */}
-        {/* <small>No traders added yet</small> */}
-        {/* )} */}
-        {/* <input type="text" name="from" value={formData.from} onChange={handleInputChange} /> */}
-        {/* </label> */}
+            </select>
+          ) : (
+            <small>No traders added yet</small>
+          )}
+        </label>
         <br />
-        {/* <label>
+        <label>
           Type:
+          <select name="type" value={formData.type} onChange={setPlantType}>
+            <option value="cutting">Cutting</option>
+            <option value="seed">Seed</option>
+            <option value="rhizome">Rhizome</option>
+            <option value="none">None</option>
+          </select>
+        </label>
+
+        <label>
+          From (location):
           <input
             type="text"
-            name="type"
-            value={formData.type}
+            name="location"
+            value={formData.location}
             onChange={handleInputChange}
           />
-        </label> */}
+        </label>
         <br />
         <button type="submit">Submit</button>
       </form>
     </Container>
   );
 }
-
-export default PlantCreationForm;

@@ -8,7 +8,9 @@ export const useUsersStore = create<UsersState>()(
         return {
           currentUser: undefined,
           logOut: () => {
-            set((state) => ({ ...state, currentUser: undefined }));
+            if (get().currentUser !== undefined) {
+              set((state) => ({ ...state, currentUser: undefined }));
+            }
           },
           setCurrentUser: (payload: UserFromServer) => {
             set((state) => {

@@ -26,6 +26,9 @@ declare module 'Plants' {
         from?: string,
         image?: string,
         fontSize: string
+        fromTrader?: string,
+        location?: string,
+        type?: PlantTypeCol,
         // ETC
     }
 
@@ -33,5 +36,5 @@ declare module 'Plants' {
         id: string,
     }
 
-
+    type PlantTypeCol = 'cutting' | 'seed' | 'rhizome' | 'none'
 }

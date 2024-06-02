@@ -19,27 +19,38 @@ import { DeepPlant, PlantTypeCol } from "Plants";
 import PlantModel from "./plant-model";
 import { useTraderStore } from "../../store/traders/traders";
 
-export type PlantEditProps = DeepPlant & { closeEdit: () => void };
-// export interface PlantEditProps extends DeepPlant {}
+export interface PlantEditProps {
+  manageType: "create" | "edit";
+  plantArgs?: DeepPlant;
+  closeEdit?: () => void;
+}
 
 /**
  * Plant Edit Form Component (break into file)
  */
-
-/** UN-USED?! remove when feels safe */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function PlantEditForm({
-  name,
-  fontSize,
-  id,
-  location,
-  fromTrader,
-  type,
+function ManagePlantForm({
+  plantArgs = {
+    name: {
+      genusName: "",
+      speciesName: "",
+      varietyName: "",
+      name1a: { species: false, name: "" },
+      name1b: { species: false, name: "" },
+      name2a: { species: false, name: "" },
+      name2b: { species: false, name: "" },
+    },
+    fontSize: "13px",
+    id: "",
+    location: "",
+    type: "none",
+  },
   closeEdit,
+  manageType,
 }: PlantEditProps) {
+  const { name, fromTrader, id, location, type, fontSize } = plantArgs;
   const navigate = useNavigate();
   const { traders } = useTraderStore();
-  const { update } = usePlantStore();
+  const { update, add } = usePlantStore();
 
   const [nameState, setNameState] = React.useState<PlantNameFields>({
     genusName: name.genusName,
@@ -64,14 +75,14 @@ function PlantEditForm({
   });
 
   const [parent1 /*, setParent1*/] = React.useState<boolean>(
-    !!nameState.name1aName
+    true //!!nameState.name1aName
   );
   const [grandparents1, setGrandparents1] = React.useState<boolean>(
     !!nameState.name1bName
   );
 
   const [parent2 /*, setParent2*/] = React.useState<boolean>(
-    !!nameState.name2aName
+    true //!!nameState.name2aName
   );
   const [grandparents2, setGrandparents2] = React.useState<boolean>(
     !!nameState.name2bName
@@ -132,9 +143,27 @@ function PlantEditForm({
       name2bName,
     } = nameState;
 
-    await update(
-      {
+    if (manageType === "edit") {
+      console.log(formData);
+      await update(
+        {
+          ...formData,
+          name: {
+            genusName,
+            speciesName,
+            varietyName,
+            name1a: mapNamesToObjects(name1aName, name1aSpecies),
+            name1b: mapNamesToObjects(name1bName, name1bSpecies),
+            name2a: mapNamesToObjects(name2aName, name2aSpecies),
+            name2b: mapNamesToObjects(name2bName, name2bSpecies),
+          },
+        },
+        id
+      );
+    } else if (manageType === "create") {
+      await add({
         ...formData,
+        fontSize,
         name: {
           genusName,
           speciesName,
@@ -144,9 +173,8 @@ function PlantEditForm({
           name2a: mapNamesToObjects(name2aName, name2aSpecies),
           name2b: mapNamesToObjects(name2bName, name2bSpecies),
         },
-      },
-      id
-    );
+      });
+    }
     return navigate(-1);
   }
 
@@ -180,7 +208,12 @@ function PlantEditForm({
 
   return (
     <Container>
-      <Button variant="outlined" onClick={closeEdit}>
+      <Button
+        variant="outlined"
+        onClick={() => {
+          manageType === "edit" && closeEdit ? closeEdit() : navigate(-1);
+        }}
+      >
         Back
       </Button>
       <form
@@ -191,12 +224,12 @@ function PlantEditForm({
           flexDirection: "column",
         }}
       >
-        <h4>Editing {new PlantModel({ name, fontSize, id }).getName()}</h4>
-        {/* 
-        nameState objekt
-        handleInputNameChange,
-        handle
-        */}
+        {manageType === "edit" ? (
+          <h4>Editing {new PlantModel({ name, fontSize, id }).getName()}</h4>
+        ) : (
+          <h4>Create new plant</h4>
+        )}
+
         <Grid2 container spacing={2} display="flex">
           <Grid2
             md={4}
@@ -420,7 +453,7 @@ function PlantEditForm({
           <input
             type="text"
             name="location"
-            value={formData.location}
+            value={formData.location === null ? "" : formData.location}
             onChange={handleInputChange}
           />
         </label>
@@ -430,3 +463,5 @@ function PlantEditForm({
     </Container>
   );
 }
+
+export default ManagePlantForm;

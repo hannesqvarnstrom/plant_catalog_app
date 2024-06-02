@@ -85,12 +85,8 @@ const PlantQRCodePDF = ({ plantData }: PlantQRCodeProps) => {
         <Button
           onClick={() => {
             if (plant !== undefined) {
-              const newPlantObject = {
-                ...plant,
-                fontSize: fontSize,
-              };
               plantsStore
-                .update(newPlantObject, plant.id)
+                .update({ fontSize }, plant.id)
                 .catch((e) =>
                   console.error("error while updating fontsize", e)
                 );

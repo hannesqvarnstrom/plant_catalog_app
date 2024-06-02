@@ -11,10 +11,10 @@ import {
 import Home from "./pages/home/index.tsx";
 import ErrorPage from "./components/error-page.tsx";
 import Plants from "./pages/plants/index.tsx";
-import PlantCreationForm from "./pages/plants/plant-form.tsx";
 import Traders from "./pages/traders/index.tsx";
 import TraderCreationForm from "./pages/traders/trader-form.tsx";
 import ViewPlant from "./pages/plants/view-plant.tsx";
+import ManagePlantForm from "./pages/plants/manage-plant-form.tsx";
 
 const MyComponentWrapper: React.FC = () => {
   const { id } = useParams();
@@ -37,7 +37,7 @@ export const Routes: RouteObject[] = [
       },
       {
         path: "plants/create",
-        element: <PlantCreationForm />,
+        element: <ManagePlantForm manageType="create" />,
       },
       {
         path: "plants/:id",
