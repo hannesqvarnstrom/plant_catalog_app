@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import React from "react";
+import React, { ChangeEventHandler } from "react";
 import { usePlantStore } from "../../store/plants";
 import { Container } from "@mui/system";
 import { /*redirect,*/ useNavigate } from "react-router";
@@ -9,8 +9,13 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
+  FormLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
   Switch,
   TextField,
+  Typography,
 } from "@mui/material";
 import CreatePlantInputGroup from "../../components/forms/create-plant-input-group";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
@@ -43,11 +48,13 @@ function ManagePlantForm({
     id: "",
     location: "",
     type: "none",
+    fromTrader: "none", // confusing how this is set up
   },
   closeEdit,
   manageType,
 }: PlantEditProps) {
   const { name, fromTrader, id, location, type, fontSize } = plantArgs;
+  console.log("plantArgs:", plantArgs);
   const navigate = useNavigate();
   const { traders } = useTraderStore();
   const { update, add } = usePlantStore();
@@ -178,7 +185,7 @@ function ManagePlantForm({
     return navigate(-1);
   }
 
-  function setPlantType(event: React.ChangeEvent<HTMLSelectElement>) {
+  function setPlantType(event: SelectChangeEvent) {
     const perhapsType = event.target.value;
     if (
       perhapsType === "cutting" ||
@@ -195,6 +202,8 @@ function ManagePlantForm({
     event:
       | React.ChangeEvent<HTMLInputElement>
       | React.ChangeEvent<HTMLSelectElement>
+      | React.ChangeEvent<HTMLTextAreaElement>
+      | SelectChangeEvent
   ) {
     const { value } = event.target;
     const name = event.target.name as keyof {
@@ -416,49 +425,76 @@ function ManagePlantForm({
             <></>
           )}
         </Grid2>
-        <label>
-          From (trader):
-          {traders.length ? (
-            <select
-              defaultValue={fromTrader}
-              name="fromTrader"
-              onChange={handleInputChange}
-            >
-              <option key={"none"} value={"none"}>
-                None
-              </option>
-              {traders.map((trader) => (
-                <option key={trader.id} value={trader.id}>
-                  {trader.name}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <small>No traders added yet</small>
-          )}
-        </label>
-        <br />
-        <label>
-          Type:
-          <select name="type" value={formData.type} onChange={setPlantType}>
-            <option value="cutting">Cutting</option>
-            <option value="seed">Seed</option>
-            <option value="rhizome">Rhizome</option>
-            <option value="none">None</option>
-          </select>
-        </label>
-
-        <label>
-          From (location):
-          <input
-            type="text"
-            name="location"
-            value={formData.location === null ? "" : formData.location}
+        <Divider />
+        <FormLabel htmlFor="fromTrader">From (trader):</FormLabel>
+        {traders.length ? (
+          <Select
+            value={formData.fromTrader === null ? "none" : formData.fromTrader}
+            name="fromTrader"
+            id="fromTrader"
             onChange={handleInputChange}
-          />
-        </label>
-        <br />
-        <button type="submit">Submit</button>
+            aria-labelledby="fromTrader"
+          >
+            <MenuItem value={"none"} key={"none"}>
+              None
+            </MenuItem>
+            {traders.map((trader) => (
+              <MenuItem value={trader.id} key={trader.id}>
+                {trader.name}
+              </MenuItem>
+            ))}
+          </Select>
+        ) : (
+          <Typography variant="body2" color="textSecondary">
+            No traders added yet
+          </Typography>
+        )}
+        <Divider />
+        <FormLabel htmlFor="type">Type:</FormLabel>
+        <Select
+          value={formData.type}
+          name="type"
+          onChange={setPlantType}
+          aria-label="Plant type selection"
+        >
+          <MenuItem value="cutting">Cutting</MenuItem>
+          <MenuItem value="seed">Seed</MenuItem>
+          <MenuItem value="rhizome">Rhizome</MenuItem>
+          <MenuItem value="none">None</MenuItem>
+        </Select>
+        <Divider />
+        <FormLabel htmlFor="location">From (location):</FormLabel>
+        <TextField
+          type="text"
+          name="location"
+          value={formData.location === null ? "" : formData.location}
+          onChange={handleInputChange}
+          aria-label="Location input field"
+        />
+        <Divider />
+        <Button
+          style={{
+            padding: "16px 32px", // Increase padding for a larger button
+            fontSize: "18px", // Increase font size for better readability
+            backgroundColor: "#1976d2", // Set a primary color for better visibility
+            color: "#fff", // Set text color to white for contrast
+            borderRadius: "8px", // Add border radius for a rounded look
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Add a subtle shadow for depth
+            transition: "background-color 0.3s ease", // Smooth transition for hover effect,
+            marginBottom: "5rem",
+          }}
+          size="large"
+          type="submit"
+          aria-label="Submit button"
+          onMouseOver={(e) =>
+            (e.currentTarget.style.backgroundColor = "#1565c0")
+          } // Darken color on hover
+          onMouseOut={(e) =>
+            (e.currentTarget.style.backgroundColor = "#1976d2")
+          } // Revert color on mouse out
+        >
+          Submit
+        </Button>
       </form>
     </Container>
   );

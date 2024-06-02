@@ -68,7 +68,6 @@ export const usePlantStore = create<PlantsState>()(
         return {
           fetch: async () => {
             const { data } = await httpAgent.get<DeepPlant[]>("/plants");
-            console.log("data:", data);
 
             set((prevState) => ({ ...prevState, plants: data }));
           },
