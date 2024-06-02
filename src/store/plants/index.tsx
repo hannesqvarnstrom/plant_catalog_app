@@ -28,7 +28,11 @@ async function updatePlantInDatabase(
   if (plantArgs.fontSize) plant.fontSize = plantArgs.fontSize;
 
   if (plantArgs.name) plant.name = plantArgs.name;
-  if (plantArgs.fromTrader) plant.fromTrader = String(plantArgs.fromTrader);
+
+  if (plantArgs.fromTrader) {
+    plant.fromTrader = String(plantArgs.fromTrader);
+  }
+
   if (plantArgs.location !== undefined || plantArgs.location === "")
     plant.location = plantArgs.location;
   if (plantArgs.type) plant.type = plantArgs.type;

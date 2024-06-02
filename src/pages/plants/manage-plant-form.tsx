@@ -424,7 +424,7 @@ function ManagePlantForm({
               name="fromTrader"
               onChange={handleInputChange}
             >
-              <option key={"none"} value={""}>
+              <option key={"none"} value={"none"}>
                 None
               </option>
               {traders.map((trader) => (
