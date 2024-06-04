@@ -116,7 +116,7 @@ const Home: React.FC = () => {
               textAlign="center"
             >
               <Typography variant="h4" gutterBottom>
-                Welcome to Plant Management
+                Welcome to Plant Catalog
               </Typography>
               <Typography variant="body1" gutterBottom>
                 Please log in to continue
