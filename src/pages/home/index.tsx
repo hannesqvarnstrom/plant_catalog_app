@@ -2,16 +2,13 @@
 import {
   createTheme,
   CssBaseline,
-  PaletteMode,
   ThemeProvider,
   Typography,
-  Paper,
-  Button,
   Container,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
-import BottomAppBar from "../../layout/bottom-app-bar";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+
 import {
   GoogleCredentialResponse,
   GoogleLogin,
@@ -21,19 +18,20 @@ import { UserFromServer, useUsersStore } from "../../store/users";
 import httpAgent from "../../http";
 import { usePlantStore } from "../../store/plants";
 import { useTraderStore } from "../../store/traders/traders";
+import Navbar from "../../layout/navbar";
+import { useSettingsStore } from "../../store/settings";
 
 const Home: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
-  const [mode, setMode] = React.useState<PaletteMode>("dark");
+  const settingsStore = useSettingsStore();
+
   const [authenticated, setAuthenticated] = useState(false);
   const backendURL = import.meta.env.VITE_BACKEND_URL as string;
   const navigate = useNavigate();
-  const toggleColorMode = () => {
-    setMode((prev) => (prev === "dark" ? "light" : "dark"));
-  };
   const usersStore = useUsersStore();
   const plantsStore = usePlantStore();
   const tradersStore = useTraderStore();
+  const location = useLocation();
 
   useEffect(() => {
     if (usersStore.currentUser) {
@@ -45,13 +43,17 @@ const Home: React.FC = () => {
           };
         }>(backendURL + "/me")
         .then(() => {
-          // navigate("/plants");
+          if (location.pathname === "/") {
+            navigate("/dashboard");
+          }
+
           setAuthenticated(true);
         })
         .catch(() => {
           setAuthenticated(false);
           usersStore.logOut();
           navigate("/");
+          // navigate("/");
         });
     } else {
       setAuthenticated(false);
@@ -71,7 +73,9 @@ const Home: React.FC = () => {
     });
   }, [usersStore.currentUser]);
 
-  const defaultTheme = createTheme({ palette: { mode } });
+  const defaultTheme = createTheme({
+    palette: { mode: settingsStore.paletteMode },
+  });
   const handleLoginSuccess = async (response: GoogleCredentialResponse) => {
     const token = response.credential;
     if (!token) {
@@ -97,57 +101,31 @@ const Home: React.FC = () => {
     <>
       <ThemeProvider theme={defaultTheme}>
         <CssBaseline />
-        <Paper
-          square
-          sx={{
-            pb: "10px",
-            position: "sticky",
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 2,
-          }}
-        >
-          {/* funkar bra som breadcrumb visare, eller något som säger vart du är någonstans i appen. @todo hitta hur man visar ens nuvarande path, eller route, programmatiskt? */}
-          <Typography
-            variant="h5"
-            gutterBottom
-            component="div"
-            sx={{ p: 2, pb: 0 }}
-          >
-            Plant Catalog
-            <Button onClick={() => toggleColorMode()}>LIGHT/DARK</Button>
-            {authenticated ? (
-              <span>
-                <button
-                  onClick={() => {
-                    usersStore.logOut();
-                    navigate("/");
-                  }}
-                >
-                  Log out
-                </button>
-              </span>
-            ) : (
-              <></>
-            )}
-          </Typography>
-        </Paper>
-        <Container>
-          {!authenticated ? (
-            <GoogleOAuthProvider clientId={clientId}>
-              <GoogleLogin
-                onSuccess={handleLoginSuccess}
-                onError={() => {
-                  console.error("login failed");
-                }}
-              ></GoogleLogin>
-            </GoogleOAuthProvider>
-          ) : (
-            <Outlet />
-          )}
-        </Container>
-        <BottomAppBar></BottomAppBar>
+        {!authenticated ? (
+          <GoogleOAuthProvider clientId={clientId}>
+            <GoogleLogin
+              onSuccess={handleLoginSuccess}
+              onError={() => {
+                console.error("login failed");
+              }}
+            ></GoogleLogin>
+          </GoogleOAuthProvider>
+        ) : (
+          <>
+            <Navbar authenticated={authenticated} />
+            <Container>
+              <Typography
+                variant="h5"
+                gutterBottom
+                component="div"
+                sx={{ p: 2, pb: 0 }}
+              ></Typography>
+
+              <Outlet />
+            </Container>
+          </>
+        )}
+        {/* <BottomAppBar></BottomAppBar> */}
       </ThemeProvider>
     </>
   );

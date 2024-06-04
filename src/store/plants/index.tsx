@@ -13,7 +13,7 @@ async function addPlantToDatabase(plantArgs: ShallowPlant): Promise<DeepPlant> {
   if (plantArgs.fromTrader) plant.fromTrader = String(plantArgs.fromTrader);
   if (plantArgs.location) plant.location = plantArgs.location;
   if (plantArgs.type) plant.type = plantArgs.type;
-
+  console.log("plantArgs", plantArgs);
   const newPlant = await httpAgent.post<DeepPlant>("/plants", plant);
   console.log("newPlant:", newPlant);
   return newPlant.data;
@@ -50,6 +50,7 @@ interface PlantsState {
   devPurgeAll: () => void;
   update: (args: Partial<ShallowPlant>, id: string) => Promise<void>;
   fetch: () => Promise<void>;
+  getMostRecentPlants: () => DeepPlant[];
 }
 
 async function removePlantFromDatabase(id: string): Promise<boolean> {
@@ -64,8 +65,17 @@ async function removePlantFromDatabase(id: string): Promise<boolean> {
 export const usePlantStore = create<PlantsState>()(
   devtools(
     persist(
-      (set) => {
+      (set, get) => {
         return {
+          getMostRecentPlants: () => {
+            const plants = get().plants;
+            const sortedPlants = plants.sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+            );
+            return sortedPlants.slice(0, 6);
+          },
           fetch: async () => {
             const { data } = await httpAgent.get<DeepPlant[]>("/plants");
 

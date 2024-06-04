@@ -1,74 +1,22 @@
 import React from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ReactDOM from "react-dom/client";
-// import App from './App.tsx'
-import "./index.css";
-import {
-  createBrowserRouter,
-  RouteObject,
-  RouterProvider,
-  useParams,
-} from "react-router-dom";
-import Home from "./pages/home/index.tsx";
-import ErrorPage from "./components/error-page.tsx";
-import Plants from "./pages/plants/index.tsx";
-import Traders from "./pages/traders/index.tsx";
-import TraderCreationForm from "./pages/traders/trader-form.tsx";
-import ViewPlant from "./pages/plants/view-plant.tsx";
-import ManagePlantForm from "./pages/plants/manage-plant-form.tsx";
-
-const MyComponentWrapper: React.FC = () => {
-  const { id } = useParams();
-  if (!id) {
-    console.log({ id });
-    return <ErrorPage></ErrorPage>;
-  }
-  return <ViewPlant id={id}></ViewPlant>;
-};
-
-export const Routes: RouteObject[] = [
-  {
-    path: "/",
-    element: <Home />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: "plants/",
-        element: <Plants />,
-      },
-      {
-        path: "plants/create",
-        element: <ManagePlantForm manageType="create" />,
-      },
-      {
-        path: "plants/:id",
-        element: <MyComponentWrapper></MyComponentWrapper>,
-        // element: <ViewPlant id={plantId} />,
-      },
-      {
-        path: "traders",
-        element: <Traders />,
-      },
-      {
-        path: "traders/create",
-        element: <TraderCreationForm />,
-      },
-      {
-        path: "traders/:id",
-        element: (
-          <div>
-            <h1>Unimplemented specific trader route</h1>
-          </div>
-        ),
-      },
-    ],
-  },
-];
+import { Routes } from "./routes";
 
 const router = createBrowserRouter(Routes);
 
+const App: React.FC = () => {
+  return (
+    <>
+      <RouterProvider router={router}></RouterProvider>
+    </>
+  );
+};
+
+export default App;
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
-    {/* <App /> */}
+    <App />
   </React.StrictMode>
 );

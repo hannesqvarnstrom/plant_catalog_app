@@ -5,17 +5,7 @@ import {
   Switch,
   TextField,
 } from "@mui/material";
-import React from "react";
-
-interface CreatePlantInputGroupProps {
-  checked?: boolean;
-  switchChangeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  switchName: string;
-  textFieldLabel: string;
-  textFieldName: string;
-  textFieldChangeHandler: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  initialValue?: string;
-}
+import { CreatePlantInputGroupProps } from "../../pages/page-prop-types";
 
 function CreatePlantInputGroup({
   checked,

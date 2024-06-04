@@ -20,16 +20,10 @@ import {
 import CreatePlantInputGroup from "../../components/forms/create-plant-input-group";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import { PlantCreationFormData, PlantNameFields } from "./plant-form";
-import { DeepPlant, PlantTypeCol } from "Plants";
+import { PlantTypeCol } from "Plants";
 import PlantModel from "./plant-model";
 import { useTraderStore } from "../../store/traders/traders";
-
-export interface PlantEditProps {
-  manageType: "create" | "edit";
-  plantArgs?: DeepPlant;
-  closeEdit?: () => void;
-}
-
+import { PlantEditProps } from "../page-prop-types";
 /**
  * Plant Edit Form Component (break into file)
  */
@@ -53,7 +47,9 @@ function ManagePlantForm({
   closeEdit,
   manageType,
 }: PlantEditProps) {
-  const { name, fromTrader, id, location, type, fontSize } = plantArgs;
+  const { name, fromTrader, location, type, fontSize } = plantArgs;
+  const id /*: typeof manageType extends "edit" ? string : undefined */ =
+    manageType === "edit" ? (plantArgs as { id: string }).id : undefined;
   console.log("plantArgs:", plantArgs);
   const navigate = useNavigate();
   const { traders } = useTraderStore();
@@ -165,7 +161,7 @@ function ManagePlantForm({
             name2b: mapNamesToObjects(name2bName, name2bSpecies),
           },
         },
-        id
+        id!
       );
     } else if (manageType === "create") {
       await add({
@@ -182,7 +178,8 @@ function ManagePlantForm({
         },
       });
     }
-    return navigate(-1);
+
+    return navigate(`/plants/${id}`);
   }
 
   function setPlantType(event: SelectChangeEvent) {

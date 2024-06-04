@@ -1,15 +1,9 @@
 /* eslint-disable react/display-name */
-import { ShallowPlant } from "Plants";
 import { QRCodeCanvas } from "qrcode.react";
 import React from "react";
 import PlantModel from "./plant-model";
+import { PlantQRCodeProps } from "../page-prop-types";
 // import { QRPDFSettings } from "./plant-qr-code-pdf";
-
-export interface PlantQRCodeProps {
-  plantData: { id: string; name: ShallowPlant["name"]; from: string };
-  fontSize: string;
-  // pdfSettings: QRPDFSettings;
-}
 
 const PlantQRCode = React.forwardRef(
   ({ plantData, fontSize /*, pdfSettings*/ }: PlantQRCodeProps, ref) => {

@@ -1,9 +1,10 @@
-import PlantQRCode, { PlantQRCodeProps } from "./plant-qr-code";
+import PlantQRCode from "./plant-qr-code";
 import jsPDF, { ImageOptions } from "jspdf";
 import html2canvas from "html2canvas";
 import React from "react";
 import { Box, Button, FormControl, Slider } from "@mui/material";
 import { usePlantStore } from "../../store/plants";
+import { PlantQRCodeProps } from "../page-prop-types";
 
 // export interface QRPDFSettings {
 //   fontSize: string;

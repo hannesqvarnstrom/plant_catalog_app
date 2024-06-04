@@ -8,6 +8,7 @@ function Traders() {
   return (
     <Box>
       <h3>Traders</h3>
+      <p>(This is under development, clearly)</p>
       <Link to={"create"}>Create</Link>
       {traders.length ? (
         <ul>
@@ -17,7 +18,7 @@ function Traders() {
               <small>
                 <i>{trader.description}</i>
               </small>
-              <button
+              {/* <button
                 onClick={() => {
                   const confirmation = confirm(
                     "Are you sure you want to delete this trader?"
@@ -26,7 +27,7 @@ function Traders() {
                 }}
               >
                 Delete Trader
-              </button>
+              </button> */}
             </li>
           ))}
         </ul>

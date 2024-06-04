@@ -29,11 +29,13 @@ declare module 'Plants' {
         fromTrader?: string,
         location?: string,
         type?: PlantTypeCol,
+
         // ETC
     }
 
     interface DeepPlant extends ShallowPlant {
         id: string,
+        createdAt: Date | string
     }
 
     type PlantTypeCol = 'cutting' | 'seed' | 'rhizome' | 'none'
