@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { DeepPlant, ShallowPlant } from "Plants";
@@ -13,11 +14,9 @@ async function addPlantToDatabase(plantArgs: ShallowPlant): Promise<DeepPlant> {
   if (plantArgs.fromTrader) plant.fromTrader = String(plantArgs.fromTrader);
   if (plantArgs.location) plant.location = plantArgs.location;
   if (plantArgs.type) plant.type = plantArgs.type;
-  console.log("plantArgs", plantArgs);
+
   const newPlant = await httpAgent.post<DeepPlant>("/plants", plant);
-  console.log("newPlant:", newPlant);
   return newPlant.data;
-  // return getResourceWithIDAfterMS(plant);
 }
 
 async function updatePlantInDatabase(

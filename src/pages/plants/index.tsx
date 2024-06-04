@@ -4,6 +4,7 @@ import { Container, IconButton, Typography } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import PlantCard from "../dashboard/plant-card";
 import { Add } from "@mui/icons-material";
+import SectionDivider from "../../components/section-divider";
 
 function Plants() {
   const { plants } = usePlantStore();
@@ -26,6 +27,7 @@ function Plants() {
           </Link>
         </Grid2>
       </Grid2>
+      <SectionDivider />
       {plants.length ? (
         <Grid2 container spacing={3}>
           {plants.map((plant, i) => (

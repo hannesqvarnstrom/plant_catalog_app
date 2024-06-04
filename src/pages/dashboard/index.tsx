@@ -19,6 +19,7 @@ import {
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { DeepPlant } from "Plants";
+import SectionDivider from "../../components/section-divider";
 
 const Dashboard: React.FC = () => {
   const { plants, getMostRecentPlants } = usePlantStore();
@@ -72,7 +73,7 @@ const Dashboard: React.FC = () => {
           </Grid2>
         ))}
       </Grid2>
-
+      <SectionDivider />
       <RecentPlantsList plants={recentPlants} />
       {/* <RecentTradersList traders={traders} /> */}
     </Container>

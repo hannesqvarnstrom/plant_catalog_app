@@ -5,6 +5,8 @@ import {
   ThemeProvider,
   Typography,
   Container,
+  Box,
+  Divider,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -20,6 +22,7 @@ import { usePlantStore } from "../../store/plants";
 import { useTraderStore } from "../../store/traders/traders";
 import Navbar from "../../layout/navbar";
 import { useSettingsStore } from "../../store/settings";
+import Settings from "../settings";
 
 const Home: React.FC = () => {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
@@ -102,14 +105,44 @@ const Home: React.FC = () => {
       <ThemeProvider theme={defaultTheme}>
         <CssBaseline />
         {!authenticated ? (
-          <GoogleOAuthProvider clientId={clientId}>
-            <GoogleLogin
-              onSuccess={handleLoginSuccess}
-              onError={() => {
-                console.error("login failed");
-              }}
-            ></GoogleLogin>
-          </GoogleOAuthProvider>
+          <Container maxWidth="sm">
+            <Box
+              display="flex"
+              flexDirection="column"
+              marginTop="5rem"
+              // justifyContent="center"
+              alignItems="center"
+              minHeight="100vh"
+              textAlign="center"
+            >
+              <Typography variant="h4" gutterBottom>
+                Welcome to Plant Management
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                Please log in to continue
+              </Typography>
+              <Box mt={3}>
+                <GoogleOAuthProvider clientId={clientId}>
+                  <GoogleLogin
+                    onSuccess={handleLoginSuccess}
+                    onError={() => {
+                      console.error("login failed");
+                    }}
+                  ></GoogleLogin>
+                </GoogleOAuthProvider>
+              </Box>
+              <Divider
+                sx={{
+                  mb: 4,
+                  mt: 2,
+                  backgroundColor: "lightgrey",
+                  height: "1px",
+                  width: "80%",
+                }}
+              />
+              <Settings />
+            </Box>
+          </Container>
         ) : (
           <>
             <Navbar authenticated={authenticated} />

@@ -63,6 +63,13 @@ const PlantQRCodePDF = ({ plantData }: PlantQRCodeProps) => {
   // console.log("fontSize:", fontSize);
   return (
     <div>
+      {/* 
+        QR code is now constrained by all of our containers.
+        solutions:
+        - show in a modal, thereby rendered outside of containers.
+        - make it basically position absolute and z-index = high so it it able to be manipulated
+        - ?
+      */}
       <PlantQRCode
         ref={componentRef}
         plantData={plantData}
